@@ -15,7 +15,7 @@ defaultproperties
 	bForceNoFade=true
 	InventoryTypes(0)=class'PotionHEACollection'
 	PickupSounds(0)=Sound'Items.pickup_coin03'
-	Event='PotionHEAPickup'
+	Event=PotionHEAPickup
 	AmbientEmitterClass=class'SpMove_Twirl'
 	PickupEmitterClass=class'SpMove_Explod'
 	StaticMesh=StaticMesh'4_FGM_PIB_SM.HEA_potion'

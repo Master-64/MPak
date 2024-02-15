@@ -31,7 +31,7 @@ function PostPickupLogic(Actor Other)
 defaultproperties
 {
 	InventoryTypes(0)=class'EnergyKegCollection'
-	Event='EnergyKegPickup'
+	Event=EnergyKegPickup
 	StaticMesh=StaticMesh'Shrek2_Univ_SM.Energy_KegShape'
 	DrawScale=1.5
 	CollisionRadius=25.0

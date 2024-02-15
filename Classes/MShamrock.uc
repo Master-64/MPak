@@ -78,7 +78,7 @@ defaultproperties
 	InventoryTypes(0)=class'ShamrockCollection'
 	iNumItems(0)=(Min=1)
 	PickupSounds(0)=Sound'Items.PickupShamrock'
-	Event='ShamrockPickup'
+	Event=ShamrockPickup
 	StaticMesh=StaticMesh'Shrek2_Univ_SM.ShamrockShape'
 	DrawScale=0.35
 	CollisionRadius=20.0

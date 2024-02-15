@@ -15,7 +15,7 @@ defaultproperties
 	PrePivot=(Z=10.0)
 	InventoryTypes(0)=class'PotionBottleCollection'
 	PickupSounds(0)=Sound'Items.shamrock_pickup'
-	Event='PotionBottlePickup'
+	Event=PotionBottlePickup
 	AmbientEmitterClass=class'Potbot_Static'
 	PickupEmitterClass=class'Potbot_Explod'
 	StaticMesh=StaticMesh'Shrek2_Univ_SM.Potion_BottleShape'

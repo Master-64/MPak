@@ -24,7 +24,7 @@ function PostPickupLogic(Actor Other)
 defaultproperties
 {
 	InventoryTypes(0)=class'MicePotionWeakCollection'
-	Event='PixiePotionWeakPickup'
+	Event=PixiePotionWeakPickup
 	StaticMesh=StaticMesh'Shrek2_Univ_SM.pixie_potion'
 	DrawScale=0.66
 	CollisionRadius=10.0

@@ -24,7 +24,7 @@ function PostPickupLogic(Actor Other)
 defaultproperties
 {
 	InventoryTypes(0)=class'StrengthPotionCollection'
-	Event='StrengthPotionPickup'
+	Event=StrengthPotionPickup
 	StaticMesh=StaticMesh'Shrek2_Univ_SM.Spec_MoveShape'
 	CollisionRadius=10.0
 	CollisionHeight=20.0

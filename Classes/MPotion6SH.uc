@@ -13,6 +13,6 @@ class MPotion6SH extends MStockPotions
 defaultproperties
 {
 	InventoryTypes(0)=class'Potion2Collection' // KnowWonder moment
-	Event='Potion6SHPickup'
+	Event=Potion6SHPickup
 	StaticMesh=StaticMesh'Shrek2_Univ_SM.Potion_Bottles.potion_6'
 }

@@ -65,7 +65,7 @@ defaultproperties
 	bPlayBumpline=true
 	InventoryTypes(0)=class'EnergyBarCollection'
 	PickupSounds(0)=Sound'Items.pickup_HeroBar'
-	Event='EnergyBarPickup'
+	Event=EnergyBarPickup
 	AmbientEmitterClass=class'Health_Twirl'
 	PickupEmitterClass=class'Health_Explod'
 	StaticMesh=StaticMesh'Shrek2_Univ_SM.Energy_BarShape'

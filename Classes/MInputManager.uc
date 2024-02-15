@@ -10,6 +10,7 @@
 
 
 class MInputManager extends MInfo
+	Notplaceable
 	Config(MPak);
 
 

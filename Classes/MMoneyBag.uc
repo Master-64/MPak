@@ -32,7 +32,7 @@ defaultproperties
 	iNumItems(0)=(Min=1)
 	iNumItems(1)=(Min=10,Max=100)
 	PickupSounds(0)=Sound'Items.pickup_coin03'
-	Event='MoneyBagPickup'
+	Event=MoneyBagPickup
 	PickupEmitterClass=class'SpMove_Explod'
 	StaticMesh=StaticMesh'Shrek2_Univ_SM.Potion_Bottles.MoneyBag'
 	DrawScale=0.25

@@ -15,5 +15,5 @@ defaultproperties
 	sPosterTexture="SH_Menu.Wanted_Posters.Poster10"
 	Skins(0)=Texture'Shrek2_Univ_Tex.PickUps.poster10_sm'
 	InventoryTypes(0)=class'ShrekPosterCollection10sh'
-	Event='ShrekPoster10SHPickup'
+	Event=ShrekPoster10SHPickup
 }

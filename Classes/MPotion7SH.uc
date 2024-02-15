@@ -13,6 +13,6 @@ class MPotion7SH extends MStockPotions
 defaultproperties
 {
 	InventoryTypes(0)=class'Potion7Collection'
-	Event='Potion7SHPickup'
+	Event=Potion7SHPickup
 	StaticMesh=StaticMesh'Shrek2_Univ_SM.Potion_Bottles.potion_7'
 }

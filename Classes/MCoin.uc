@@ -47,7 +47,7 @@ defaultproperties
 	PickupSounds(0)=Sound'Items.pickup_coin01'
 	PickupSounds(1)=Sound'Items.pickup_coin02'
 	PickupSounds(2)=Sound'Items.pickup_coin04'
-	Event='CoinPickup'
+	Event=CoinPickup
 	AmbientEmitterClass=class'Coin_Twirl'
 	PickupEmitterClass=class'Coin_Explod'
 	StaticMesh=StaticMesh'Shrek2_Univ_SM.CoinShape'
