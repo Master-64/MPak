@@ -105,9 +105,6 @@ event PostBeginPlay()
 
 event Tick(float DeltaTime)
 {
-	// LevelInfo.PlayerHeroActor can be potentially adjusted each tick so it's necessary to check for a change each tick
-	CoreGetHP();
-	
     fDeltaTime = DeltaTime;
 	
 	if(bLevelLoaded)
@@ -153,7 +150,7 @@ function KWHeroController GetPC()
 	return PC;
 }
 
-protected function CoreGetHP()
+protected function Pawn CoreGetHP()
 {
 	// Primary logic for getting HP
 	// This uses a much quicker calculation than a GetProp and a SetProp
@@ -167,7 +164,7 @@ protected function CoreGetHP()
 	{
 		HP = PC.Pawn;
 		
-		return;
+		return HP;
 	}
 	
 	// If the above logic didn't work, just run a GetProp and a SetProp to more-than-likely get HP
@@ -176,11 +173,13 @@ protected function CoreGetHP()
 	SetPropertyText("tHP", Level.GetPropertyText("PlayerHeroActor"));
 	
 	HP = tHP;
+	
+	return HP;
 }
 
 function Pawn GetHP()
 {
-	return HP;
+	return CoreGetHP();
 }
 
 protected function CoreGetICP()
