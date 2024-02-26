@@ -34,7 +34,7 @@ event PreBeginPlay()
 		Destroy();
 	}
 	
-	if(bool(GetPropertyText("bChangeOpacityForCamera")) && "PixoDrv.PixoRenderDevice" ~= GetIniEntry("Engine.Engine", "RenderDevice", "system"))
+	if(bool(GetPropertyText("bChangeOpacityForCamera")) && U.IsSoftwareRendering())
 	{
 		SetPropertyText("bChangeOpacityForCamera", "False");
 		
@@ -174,8 +174,6 @@ event bool Mount(vector Delta, Actor A)
 	
 	if(IsInState('Mounting') || IsInState('MountFinish') || IsInState('MountHanging'))
 	{
-		U.CM("*********** Already mounting...");
-		
 		return false;
 	}
 	
@@ -185,8 +183,6 @@ event bool Mount(vector Delta, Actor A)
 		{
 			if(ShimmyNode(Touching[i]).bFallDown)
 			{
-				CM("*********** touching ShimmyNode, could not mount");
-				
 				return false;
 			}
 		}
@@ -212,8 +208,6 @@ event bool Mount(vector Delta, Actor A)
 	{
 		return false;
 	}
-	
-	CMAndLog("*" @ string(Name) @ "Mount deltaZ:" $ string(Delta.Z) @ "phys:" $ string(Physics) @ string(self) @ string(GetStateName()) @ "Yaw:" $ string(rotator(Delta).Yaw) @ "DeltaSize2d:" $ string(VSize2d(Delta)));
 
 	bDoingMountThatTCsShouldFollow = false;
 	

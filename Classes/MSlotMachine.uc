@@ -99,7 +99,7 @@ struct PrizeStruct
 	var() array<Sound> SpawnSound;
     var() vector vOffset;
     var() rotator rOffset;
-	var() bool bIgnoreMultiplier, bBadPrize, bMaxWinPrize, bSurpriseFullscreen, bMustFullscreen;
+	var() bool bIgnoreMultiplier, bBadPrize, bMaxWinPrize, bSurpriseFullscreen, bMustFullscreen, bDisableSlotMachine;
 	var() FMinMaxStruct fThrowVelocityMultiplier, fThrowLengthMultiplier, fThrowHeightMultiplier;
 	var() float fThrowDeviationLengthMultiplier;
 	var() BonusStruct BonusSettings;
@@ -137,7 +137,7 @@ var int iSubtractedCoins, iOldSubtractedCoins, iCurrentPrize, iPrizeIndex, iPriz
 var float fRTPTotalValue, fElapsedTime;
 var array<float> RTPs;
 var array<int> NextSlotIconIndexes;
-var bool bGUIOpen;
+var bool bGUIOpen, bDisabled;
 var MVendingWitch Witch;
 var Material CostSignBackup, SavingTexture;
 var ScriptedTexture CostSign;
@@ -240,6 +240,8 @@ event PostBeginPlay()
 	iSpinsPerBet.Count = U.RandRangeInt(iSpinsPerBet.Min, iSpinsPerBet.Max);
 	fRepeatIconChance.Count = U.RandRangeFloat(fRepeatIconChance.Min, fRepeatIconChance.Max);
 	iTotalLives.Count = U.RandRangeInt(iTotalLives.Min, iTotalLives.Max);
+	
+	NextSlotIconIndexes = GetNextSlotIcons(fRepeatIconChance.Count);
 	
 	MakeCostSign();
 	
@@ -495,8 +497,6 @@ function int SimulateSpins() // Simulates 500 spins and returns the total amount
 		
 		Respin:
 		
-		NextSlotIconIndexes = GetNextSlotIcons(fRepeatIconChance.Count);
-		
 		Skins[2] = PrizesToWin[NextSlotIconIndexes[0]].SlotMaterial;
 		Skins[3] = PrizesToWin[NextSlotIconIndexes[1]].SlotMaterial;
 		Skins[4] = PrizesToWin[NextSlotIconIndexes[2]].SlotMaterial;
@@ -588,6 +588,8 @@ function int SimulateSpins() // Simulates 500 spins and returns the total amount
 			}
 		}
 		
+		NextSlotIconIndexes = GetNextSlotIcons(fRepeatIconChance.Count);
+		
 		if(iSpinsPerBet.Count > 0)
 		{
 			goto 'Respin';
@@ -629,7 +631,7 @@ function ActivateVendor()
 
 function bool CanPlaceBet() // Returns true if the player is allowed to place a bet
 {
-	return IsInState('Inactive') && !Witch.bDisabled;
+	return IsInState('Inactive') && !Witch.bDisabled && !bDisabled;
 }
 
 function array<int> GetWeightsOfPrizes(array<PrizeStruct> Ps) // Returns the weights of all possible prizes, used for the weighted RNG
@@ -918,8 +920,6 @@ state SlotSpin // Logic for slot machine spinning
 	// Initialize pre-spin logic
 	Witch.GotoState('Spinning');
 	
-	NextSlotIconIndexes = GetNextSlotIcons(fRepeatIconChance.Count);
-	
 	if(CostSignTexts.bShowSpinCountForSpinText && iSpinsPerBet.Count >= 2)
 	{
 		SetCostSignText(string(iSpinsPerBet.Count - 1));
@@ -999,6 +999,11 @@ state SlotSpin // Logic for slot machine spinning
 	if(iPrizeIndex > -1 && !PrizesToWin[iPrizeIndex].bBadPrize && (!PrizesToWin[iPrizeIndex].bMustFullscreen || (PrizesToWin[iPrizeIndex].bMustFullscreen && iMatchingIcons > 2)))
 	{
 		Witch.GotoState('Payout');
+		
+		if(PrizesToWin[iPrizeIndex].bDisableSlotMachine)
+		{
+			bDisabled = true;
+		}
 		
 		if(iMatchingIcons > 2)
 		{
@@ -1085,6 +1090,11 @@ state SlotSpin // Logic for slot machine spinning
 		{
 			iPrizeIndex = U.wRNG(GetWeightsOfPrizes(PrizesOnLoss));
 			
+			if(PrizesOnLoss[iPrizeIndex].bDisableSlotMachine)
+			{
+				bDisabled = true;
+			}
+			
 			PrizesOnLoss[iPrizeIndex].iDropCount.Count = U.RandRangeInt(PrizesOnLoss[iPrizeIndex].iDropCount.Min, PrizesOnLoss[iPrizeIndex].iDropCount.Max);
 			
 			for(iCurrentPrize = 0; iCurrentPrize < PrizesOnLoss[iPrizeIndex].iDropCount.Count; iCurrentPrize++)
@@ -1099,6 +1109,11 @@ state SlotSpin // Logic for slot machine spinning
 		else
 		{
 			PrizesToWin[iPrizeIndex].iDropCount.Count = U.RandRangeInt(PrizesToWin[iPrizeIndex].iDropCount.Min, PrizesToWin[iPrizeIndex].iDropCount.Max) * iRewardMultiplier;
+			
+			if(PrizesToWin[iPrizeIndex].bDisableSlotMachine)
+			{
+				bDisabled = true;
+			}
 			
 			for(iCurrentPrize = 0; iCurrentPrize < PrizesToWin[iPrizeIndex].iDropCount.Count; iCurrentPrize++)
 			{
@@ -1120,6 +1135,8 @@ state SlotSpin // Logic for slot machine spinning
 		}
 	}
 	
+	NextSlotIconIndexes = GetNextSlotIcons(fRepeatIconChance.Count);
+	
 	if(iSpinsPerBet.Count > 0 && (!bUseLifeSystem || (bUseLifeSystem && iTotalLives.Count > 0)))
 	{
 		goto 'Respin';
@@ -1131,7 +1148,7 @@ state SlotSpin // Logic for slot machine spinning
 			U.GetPC().GotoState('PlayerWalking');
 		}
 		
-		if(!bUseLifeSystem || (bUseLifeSystem && iTotalLives.Count > 0))
+		if(!bUseLifeSystem || (bUseLifeSystem && iTotalLives.Count > 0) || bDisabled)
 		{
 			Witch.GotoState('Active');
 			

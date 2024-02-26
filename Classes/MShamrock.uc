@@ -13,28 +13,6 @@ class MShamrock extends MPickup
 var() bool bBypassHealthCap, bPlayBumpline, bHealPawn;
 
 
-event PostBeginPlay()
-{
-	super.PostBeginPlay();
-	
-	if(U.GetInventoryCount(InventoryTypes[0]) >= 5)
-	{
-		Destroy();
-		
-		bRunPickupLogic = false;
-	}
-}
-
-function PrePickupLogic(Actor Other)
-{
-	if(U.GetInventoryCount(InventoryTypes[0]) >= 5)
-	{
-		Destroy();
-		
-		bRunPickupLogic = false;
-	}
-}
-
 function PostPickupLogic(Actor Other)
 {
 	local float fOldHealth;

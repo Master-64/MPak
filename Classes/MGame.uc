@@ -39,6 +39,48 @@ function MUtils GetUtils()
 	return Spawn(class'MUtils');
 }
 
+event PlayerController Login(string Portal, string Options, out string Error)
+{
+	local PlayerController NewPlayer;
+	local KWPawn TestPawn;
+	local class<Security> MySecurityClass;
+	
+	foreach AllActors(class'KWPawn', TestPawn)
+	{
+		if(bool(TestPawn.GetPropertyText("bIsMainPlayer")) && TestPawn.Controller != none)
+		{
+			if(TestPawn.Controller.Pawn != TestPawn)
+			{
+				TestPawn.Controller.Possess(TestPawn);
+			}
+			
+			return PlayerController(TestPawn.Controller);
+		}
+		
+		if(bool(TestPawn.GetPropertyText("bIsMainPlayer")) && TestPawn.Controller == none)
+		{
+			NewPlayer = Spawn(class<PlayerController>(DynamicLoadObject(PlayerControllerClassName, class'Class')));
+			
+			if(NewPlayer != none)
+			{
+				NewPlayer.GameReplicationInfo = GameReplicationInfo;
+				NewPlayer.GotoState('Spectating');
+				MySecurityClass = class<Security>(DynamicLoadObject(SecurityClass, class'Class'));
+				NewPlayer.PlayerSecurity = Spawn(MySecurityClass, self);
+				
+				if(bDelayedStart)
+				{
+					NewPlayer.GotoState('PlayerWaiting');
+				}
+				
+				NewPlayer.Possess(TestPawn);
+				
+				return NewPlayer;
+			}
+		}
+	}
+}
+
 
 defaultproperties
 {

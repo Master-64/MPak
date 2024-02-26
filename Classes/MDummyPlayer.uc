@@ -6,15 +6,12 @@
 // *****************************************************
 
 
-class MVersion extends MInfo
+class MDummyPlayer extends MHeroPawn
 	Config(MPak);
-
-
-var() string Version, ModName;
 
 
 defaultproperties
 {
-	Version="Build 4"
-	ModName="MPak"
+	bIsMainPlayer=true
+	Mesh=SkeletalMesh'ShrekCharacters.Shrek'
 }

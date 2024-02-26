@@ -158,6 +158,17 @@ protected function Pawn CoreGetHP()
 	if(PC == none)
 	{
 		GetPC();
+		
+		if(PC == none)
+		{
+			tHP = none;
+			
+			SetPropertyText("tHP", Level.GetPropertyText("PlayerHeroActor"));
+			
+			HP = tHP;
+			
+			return HP;
+		}
 	}
 	
 	if(PC.Pawn != none)
@@ -3148,6 +3159,33 @@ static function array<int> ShuffleIntArray(int iLength)
 	}
 	
 	return Is;
+}
+
+function HackMovementAnims(SHHeroPawn SHHP, array<name> MovementAnims)
+{
+	local bool bOldbInQuicksand;
+	local float fOldGroundSpeed;
+	local name OldWadeAnims[4];
+	local int i;
+	
+	for(i = 0; i < 4; i++)
+	{
+		OldWadeAnims[i] = SHHP.WadeAnims[i];
+		SHHP.WadeAnims[i] = MovementAnims[i];
+	}
+	
+	bOldbInQuicksand = SHHP.bInQuicksand;
+	fOldGroundSpeed = SHHP.GroundSpeed;
+	
+	SHHP.HeroInQuicksand();
+	
+	SHHP.bInQuicksand = bOldbInQuicksand;
+	SHHP.GroundSpeed = fOldGroundSpeed;
+	
+	for(i = 0; i < 4; i++)
+	{
+		SHHP.WadeAnims[i] = OldWadeAnims[i];
+	}
 }
 
 

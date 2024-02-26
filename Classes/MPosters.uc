@@ -17,28 +17,6 @@ var() string sPosterTexture;
 var() bool bDoNotFreezePlayer;
 
 
-event PostBeginPlay()
-{
-	super.PostBeginPlay();
-	
-	if(U.GetInventoryCount(InventoryTypes[0]) > 0)
-	{
-		Destroy();
-		
-		bRunPickupLogic = false;
-	}
-}
-
-function PrePickupLogic(Actor Other)
-{
-	if(U.GetInventoryCount(InventoryTypes[0]) > 0)
-	{
-		Destroy();
-		
-		bRunPickupLogic = false;
-	}
-}
-
 function PostPickupLogic(Actor Other)
 {
 	PC = U.GetPC();
