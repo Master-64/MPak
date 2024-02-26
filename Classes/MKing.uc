@@ -44,6 +44,7 @@ defaultproperties
 	IdleAnims(6)=Idle
 	IdleAnims(7)=Idle
 	BaseMovementRate=300.0
+	_BaseMovementRate=300.0
 	Mesh=SkeletalMesh'ShrekCharacters.King'
 	CollisionRadius=15.0
 	CollisionHeight=38.0

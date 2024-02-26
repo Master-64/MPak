@@ -18,6 +18,7 @@ defaultproperties
 	CameraSnapRotationPitch=-2500.0
 	GroundRunSpeed=200.0
 	BaseMovementRate=200.0
+	_BaseMovementRate=200.0
 	Mesh=SkeletalMesh'ShrekCharacters.frog'
 	CollisionRadius=15.0
 	CollisionHeight=7.5

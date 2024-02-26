@@ -38,6 +38,7 @@ defaultproperties
 	NeckRotElement=RE_RollNeg
 	HeadRotElement=RE_YawNeg
 	BaseMovementRate=300.0
+	_BaseMovementRate=300.0
 	Mesh=SkeletalMesh'ShrekCharacters.fiona_o'
 	CollisionRadius=20.0
 	CollisionHeight=38.0

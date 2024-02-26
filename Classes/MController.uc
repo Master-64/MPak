@@ -77,26 +77,26 @@ event PlayerTick(float DeltaTime)
 	SHHeroPawn(Pawn).UseSHJumpMagnet();
 	MaterialType = SHHeroPawn(Pawn).TraceMaterial(Pawn.Location, 1.5 * Pawn.CollisionHeight);
 	
-	if(MaterialType != MTYPE_Wet && SHHeroPawn(Pawn).bInWater == true)
+	if(MaterialType != MTYPE_Wet && SHHeroPawn(Pawn).bInWater)
 	{
 		SHHeroPawn(Pawn).HeroOutOfWater();
 	}
 	
-	if(MaterialType != MTYPE_QuickSand && SHHeroPawn(Pawn).bInQuicksand == true)
+	if(MaterialType != MTYPE_QuickSand && SHHeroPawn(Pawn).bInQuicksand)
 	{
 		SHHeroPawn(Pawn).HeroOutOfQuicksand();
 	}
 	
 	if(MaterialType == MTYPE_QuickSand)
 	{
-		if(SHHeroPawn(Pawn).bInQuicksand != true)
+		if(!SHHeroPawn(Pawn).bInQuicksand)
 		{
 			SHHeroPawn(Pawn).HeroInQuicksand();
 		}		
 	}
 	else if(MaterialType == MTYPE_Wet)
 	{
-		if(SHHeroPawn(Pawn).bInWater == false)
+		if(!SHHeroPawn(Pawn).bInWater)
 		{
 			SHHeroPawn(Pawn).HeroInWater();
 		}

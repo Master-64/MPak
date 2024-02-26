@@ -19,6 +19,7 @@ defaultproperties
 	GroundRunSpeed=300.0
 	GroundWalkSpeed=300.0
 	BaseMovementRate=300.0
+	_BaseMovementRate=300.0
 	Mesh=SkeletalMesh'ShrekCharacters.Mouse'
 	CollisionRadius=15.0
 	CollisionHeight=13.0

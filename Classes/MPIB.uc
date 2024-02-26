@@ -977,6 +977,7 @@ defaultproperties
 	bCanClimbLadders=True
 	ControllerClass=class'SHGame.SHCompanionController'
 	BaseMovementRate=300.0
+	_BaseMovementRate=300.0
 	Mesh=SkeletalMesh'ShrekCharacters.PIB'
 	CollisionRadius=10.0
 	CollisionHeight=19.0

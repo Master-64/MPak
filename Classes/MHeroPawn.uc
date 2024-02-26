@@ -15,6 +15,7 @@ var() bool bCanMount, bCanWaterJump, bCanAirJump, bCannotJump, bCannotPunch, bCa
 var() int iDoubleJumpCount, iAirJumpCount;
 var int iDoubleJumpCounter, iAirJumpCounter;
 var(Animation) name _MovementAnims[4];
+var(AnimTweaks) float _BaseMovementRate;
 var float MJumpZ;
 var class<AIController> AIC;
 var KWHeroController PC;
@@ -3343,8 +3344,8 @@ function HeroInWater()
 	PlayOwnedSound(InWaterSound, SLOT_None, 1.0, true, 1000.0, 1.0);
 	U.HackMovementAnims(self, MAs);
 	GroundSpeed = WaterGroundSpeed;
-	BaseMovementRate = WaterGroundSpeed;
-	fInWaterTime = 0;
+	SetPropertyText("BaseMovementRate", string(WaterGroundSpeed));
+	fInWaterTime = 0.0;
 }
 
 function HeroOutOfWater()
@@ -3353,12 +3354,12 @@ function HeroOutOfWater()
 	PlayOwnedSound(OutWaterSound, SLOT_None, 1.0, true, 1000.0, 1.0);
 	ChangeAnimation();
 	GroundSpeed = default.GroundSpeed;
-	BaseMovementRate = default.BaseMovementRate;
+	SetPropertyText("BaseMovementRate", string(_BaseMovementRate));
 	
 	if(bShrink)
 	{
 		GroundSpeed *= ShrinkLimit;
-		BaseMovementRate *= ShrinkLimit;
+		SetPropertyText("BaseMovementRate", string(_BaseMovementRate * ShrinkLimit));
 	}
 	
 	fInWaterTime = 0.0;
@@ -4360,11 +4361,12 @@ function StartToShrinkDown()
 	savespeeds[0] = int(GroundRunSpeed);
 	savespeeds[1] = int(GroundWalkSpeed);
 	savespeeds[2] = int(BaseMovementRate);
+	savespeeds[2] = int(GetPropertyText("BaseMovementRate"));
 	savespeeds[3] = int(GroundSpeed);
 	savespeeds[4] = int(WaterGroundSpeed);
 	GroundRunSpeed *= ShrinkLimit;
 	GroundWalkSpeed *= ShrinkLimit;
-	BaseMovementRate *= ShrinkLimit;
+	SetPropertyText("BaseMovementRate", string(_BaseMovementRate * ShrinkLimit));
 	GroundSpeed *= ShrinkLimit;
 	WaterGroundSpeed *= ShrinkLimit;
 	
@@ -4396,7 +4398,7 @@ function StartToShrinkUp()
 	bShrink = false;
 	GroundRunSpeed = float(savespeeds[0]);
 	GroundWalkSpeed = float(savespeeds[1]);
-	BaseMovementRate = float(savespeeds[2]);
+	SetPropertyText("BaseMovementRate", string(savespeeds[2]));
 	GroundSpeed = float(savespeeds[3]);
 	WaterGroundSpeed = float(savespeeds[4]);
 	
@@ -6011,6 +6013,7 @@ defaultproperties
 	ControllerClass=class'Sh_NPCController'
 	bPhysicsAnimUpdate=true
 	BaseMovementRate=450.0
+	_BaseMovementRate=450.0
 	_MovementAnims(0)=run
 	_MovementAnims(1)=runbackward
 	_MovementAnims(2)=StrafeLeft
