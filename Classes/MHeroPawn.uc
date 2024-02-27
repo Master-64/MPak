@@ -16,7 +16,7 @@ var() int iDoubleJumpCount, iAirJumpCount;
 var int iDoubleJumpCounter, iAirJumpCounter;
 var(Animation) name _MovementAnims[4];
 var(AnimTweaks) float _BaseMovementRate;
-var float MJumpZ;
+var float MJumpZ, fTimeSinceLastTiredDialog;
 var class<AIController> AIC;
 var KWHeroController PC;
 var Pawn HP, ICP;
@@ -3558,7 +3558,27 @@ event Tick(float DeltaTime)
 	
 	PC = U.GetPC();
 	HP = U.GetHP();
-
+	
+	if(IsTired() && HP == self)
+	{
+		if(!PC.bInCutScene() && fTimeSinceLastTiredDialog >= 10.0)
+		{
+			if(U.PercentChance(0.003))
+			{
+				if(U.GetHealth(self) > 0.0)
+				{
+					InterestMgr.CommentMgr.SayComment(TiredBumpLines, Tag,, true,,, self, "BumpDialog");
+					
+					fTimeSinceLastTiredDialog = 0.0;
+				}
+			}
+		}
+		else
+		{
+			fTimeSinceLastTiredDialog += DeltaTime;
+		}
+	}
+	
 	if(bIsSliding)
 	{
 		TickSliding(DeltaTime);
@@ -4136,18 +4156,6 @@ function bool IsFighting()
 
 function name GetIdleAnimName()
 {
-	HP = U.GetHP();
-	
-	if(IsTired() && HP == self && U.GetHealth(self) > 0.0)
-	{
-		if(float(TiredBumpLineCount) % 40.0 == 0.0)
-		{
-			InterestMgr.CommentMgr.SayComment(TiredBumpLines, Tag,, true,,, self, "BumpDialog");
-		}
-		
-		TiredBumpLineCount++;
-	}
-	
 	if(IsInState('StatePickupItem'))
 	{
 		return CarryIdleAnimName;
