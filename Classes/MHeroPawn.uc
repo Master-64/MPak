@@ -1961,7 +1961,7 @@ function DoSomeAction()
 		return;
 	}
 	
-	if(IsInState('stateThrowSwitch') || IsInState('stateSpecialAttack') || IsInState('stateBossPibAttack') || IsInState('stateStartAttack') || IsInState('stateAttack1End') || IsInState('stateAttack2End') || IsInState('stateAttack3Attack1') || IsInState('stateContinueAirAttack'))
+	if(IsInState('stateThrowSwitch') || IsInState('stateSpecialAttack') || IsInState('stateBossPibAttack') || IsInState('stateStartAttack') || IsInState('stateAttack1End') || IsInState('stateAttack2End') || IsInState('stateAttack3Attack1') || IsInState('stateContinueAirAttack') || bIsSliding)
 	{
 		return;
 	}
