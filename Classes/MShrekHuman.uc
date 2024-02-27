@@ -730,8 +730,7 @@ defaultproperties
 	PunchEmitterClass=class'Punch_Shrek'
 	AttackDistFromEnemy=40
 	CameraSetStandard=(vLookAtOffset=(X=-15.0,Y=0.0,Z=65.0),fLookAtDistance=170.0,fLookAtHeight=30.0,fRotTightness=8.0,fRotSpeed=8.0,fMoveTightness=(X=25.0,Y=40.0,Z=40.0),fMoveSpeed=0.0,fMaxMouseDeltaX=190.0,fMaxMouseDeltaY=65.0,fMinPitch=-10000.0,fMaxPitch=10000.0)
-	CameraSnapRotationPitch=-3500
-	DefaultPlayerControllerClass=class'MController'
+	CameraSnapRotationPitch=-3500.0
 	WalkAnims[1]=walkbackwards
 	LandAnims[0]=jumptostand
 	LandAnims[1]=jumptorun

@@ -879,7 +879,6 @@ defaultproperties
 	AttackDistFromEnemy=30.0
 	CameraSetStandard=(vLookAtOffset=(X=-25.0,Y=0.0,Z=45.0),fLookAtDistance=100.0,fLookAtHeight=35.0,fRotTightness=8.0,fRotSpeed=8.0,fMoveTightness=(X=25.0,Y=40.0,Z=40.0),fMoveSpeed=0.0,fMaxMouseDeltaX=190.0,fMaxMouseDeltaY=65.0,fMinPitch=-10000.0,fMaxPitch=10000.0)
 	CameraSnapRotationPitch=-2500.0
-	DefaultPlayerControllerClass=class'MController'
 	DoubleJumpAnims(1)=doublejumpback
 	CarryTurnRightAnim=carryturnright
 	CarryTurnLeftAnim=carryturnleft
@@ -978,6 +977,7 @@ defaultproperties
 	ControllerClass=class'SHGame.SHCompanionController'
 	BaseMovementRate=300.0
 	_BaseMovementRate=300.0
+	MouthBone=body_jaw_joint
 	Mesh=SkeletalMesh'ShrekCharacters.PIB'
 	CollisionRadius=10.0
 	CollisionHeight=19.0

@@ -562,7 +562,6 @@ defaultproperties
 	AttackDistFromEnemy=35.0
 	CameraSetStandard=(vLookAtOffset=(X=-15.0,Y=15.0,Z=75.0),fLookAtDistance=170.0,fLookAtHeight=50.0,fRotTightness=8.0,fRotSpeed=8.0,fMoveTightness=(X=25.0,Y=40.0,Z=40.0),fMoveSpeed=0.0,fMaxMouseDeltaX=190.0,fMaxMouseDeltaY=65.0,fMinPitch=-10000.0,fMaxPitch=10000.0)
 	CameraSnapRotationPitch=-3500.0
-	DefaultPlayerControllerclass=class'MController'
 	CarryTurnRightAnim=carryturnright
 	CarryTurnLeftAnim=carryturnleft
 	BigClimbStartNoTrans=jumptoclimb2

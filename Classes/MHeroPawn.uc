@@ -72,7 +72,6 @@ event PostBeginPlay()
 {
 	local Actor A;
 	local AIScript AIS;
-	local class<AIController> AIC;
 	local int i;
 	
 	U = GetUtils();
@@ -149,10 +148,10 @@ event PostBeginPlay()
 		}
 	}
 	
-	AnimBlendParams(ATTACKCHANNEL_LOWER, 0, 0, 0, LOWER_BODY_BONE);
-	AnimBlendParams(ATTACKCHANNEL_UPPER, 0, 0, 0, UPPER_BODY_BONE);
-	AnimBlendParams(ARMCHANNEL_RIGHT, 0, 0, 0, RIGHT_ARM_BONE);
-	AnimBlendParams(ARMCHANNEL_LEFT, 0, 0, 0, LEFT_ARM_BONE);
+	AnimBlendParams(ATTACKCHANNEL_LOWER, 0.0, 0.0, 0.0, LOWER_BODY_BONE);
+	AnimBlendParams(ATTACKCHANNEL_UPPER, 0.0, 0.0, 0.0, UPPER_BODY_BONE);
+	AnimBlendParams(ARMCHANNEL_RIGHT, 0.0, 0.0, 0.0, RIGHT_ARM_BONE);
+	AnimBlendParams(ARMCHANNEL_LEFT, 0.0, 0.0, 0.0, LEFT_ARM_BONE);
 	
 	CreateInterestManager();
 	CreateEnemyCommentaryManager();
@@ -520,6 +519,8 @@ function AddAnimNotifys()
 {
 	SetUnLitOnLowEndMachine();
 }
+
+event TravelPreAccept();
 
 function bool IsBadStateForSaving()
 {

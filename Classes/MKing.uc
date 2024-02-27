@@ -24,7 +24,6 @@ function PostBeginPlay()
 
 defaultproperties
 {
-	DefaultPlayerControllerClass=class'MController'
 	RunAnimName=run
 	WalkAnimName=Walk
 	GroundRunSpeed=300.0

@@ -30,7 +30,6 @@ function PostBeginPlay()
 defaultproperties
 {
 	NewTag=Fiona
-	DefaultPlayerControllerClass=class'MController'
 	RunAnimName=run
 	WalkAnimName=Walk
 	GroundRunSpeed=300.0

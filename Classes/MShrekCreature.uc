@@ -116,7 +116,6 @@ defaultproperties
 {
 	bCanMount=false
 	bCanJump=false
-	DefaultPlayerControllerClass=class'MController'
 	WalkAnims[0]=run
 	WalkAnims[1]=runbackward
 	WalkAnims[2]=StrafeLeft

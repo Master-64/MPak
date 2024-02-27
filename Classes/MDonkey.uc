@@ -592,7 +592,6 @@ defaultproperties
 	AttackDistFromEnemy=20.0
 	CameraSetStandard=(vLookAtOffset=(X=-35.0,Y=20.0,Z=60.0),fLookAtDistance=130.0,fLookAtHeight=40.0,fRotTightness=8.0,fRotSpeed=8.0,fMoveTightness=(X=25.0,Y=40.0,Z=40.0),fMoveSpeed=0.0,fMaxMouseDeltaX=190.0,fMaxMouseDeltaY=65.0,fMinPitch=-10000.0,fMaxPitch=10000.0)
 	CameraSnapRotationPitch=-2500.0
-	DefaultPlayerControllerClass=class'MController'
 	CarryTurnRightAnim=carryturnright
 	CarryTurnLeftAnim=carryturnleft
 	BigClimbStartNoTrans=jumptoclimb2
@@ -616,6 +615,7 @@ defaultproperties
 	LeftLowerLidBone=body_l_bottomeyelid_joint
 	RightUpperLidBone=body_r_topeyelid_joint
 	RightLowerLidBone=body_r_bottomeyelid_joint
+	HeadRotElement=RE_YawPos
 	JumpSounds(0)=Sound'Donkey.Jump'
 	LandingStone(0)=Sound'Donkey.land'
 	LandingWood(0)=Sound'Donkey.land'

@@ -15,7 +15,7 @@ defaultproperties
 	BlendOutLandingFrame=20.0
 	SHHeroName=Chicken
 	CameraSetStandard=(vLookAtOffset=(X=-30.0,Y=0.0,Z=45.0),fLookAtDistance=100.0,fLookAtHeight=30.0,fRotTightness=8.0,fRotSpeed=8.0,fMoveTightness=(X=25.0,Y=40.0,Z=40.0),fMoveSpeed=0.0,fMaxMouseDeltaX=190.0,fMaxMouseDeltaY=65.0,fMinPitch=-10000.0,fMaxPitch=10000.0)
-	CameraSnapRotationPitch=-2500
+	CameraSnapRotationPitch=-2500.0
 	GroundRunSpeed=300.0
 	GroundWalkSpeed=300.0
 	BaseMovementRate=300.0

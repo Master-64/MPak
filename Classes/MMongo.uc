@@ -464,7 +464,6 @@ defaultproperties
 	CarryStrafeRightAnimNames(0)=carrystaferight2
 	CameraSetStandard=(vLookAtOffset=(X=-200.0,Y=20.0,Z=250.0),fLookAtDistance=600.0,fLookAtHeight=400.0,fRotTightness=8.0,fRotSpeed=8.0,fMoveTightness=(X=25.0,Y=40.0,Z=40.0),fMoveSpeed=0.0,fMaxMouseDeltaX=190.0,fMaxMouseDeltaY=65.0,fMinPitch=-10000.0,fMaxPitch=10000.0)
 	CameraSnapRotationPitch=-2500.0
-	DefaultPlayerControllerClass=class'MController'
 	WalkAnims[1]=walkbackwards
 	CarryTurnRightAnim=carry_turnright
 	CarryTurnLeftAnim=carry_turnleft

@@ -275,7 +275,6 @@ defaultproperties
 	PunchEmitterClass=class'SHGame.Punch_Donkey'
 	CameraSetStandard=(vLookAtOffset=(X=-35.0,Y=0.0,Z=60.0),fLookAtDistance=130.0,fLookAtHeight=40.0,fRotTightness=8.0,fRotSpeed=8.0,fMoveTightness=(X=25.0,Y=40.0,Z=40.0),fMoveSpeed=0.0,fMaxMouseDeltaX=190.0,fMaxMouseDeltaY=65.0,fMinPitch=-10000.0,fMaxPitch=10000.0)
 	CameraSnapRotationPitch=-2500.0
-	DefaultPlayerControllerClass=class'MController'
 	BigClimbStartNoTrans=jumptoclimb2
 	BigClimbEndNoTrans=climb2
 	BigClimbStartOffset=85.0
@@ -381,6 +380,7 @@ defaultproperties
 	IdleAnims(7)=bored2
 	bIsMainPlayer=true
 	ControllerClass=class'SHGame.SHCompanionController'
+	MouthBone=body___mouth
 	Mesh=SkeletalMesh'ShrekCharacters.Steed'
 	CollisionRadius=35.0
 	CollisionHeight=35.0
