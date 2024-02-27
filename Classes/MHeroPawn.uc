@@ -230,6 +230,11 @@ event ChangeAnimation()
 	GroundSpeed = GroundRunSpeed;
 	WalkingPct = GroundWalkSpeed / GroundSpeed;
 	
+	if(bIsSliding)
+	{
+		return;
+	}
+	
 	if(bInWater || bInQuicksand)
 	{
 		for(i = 0; i < 4; i++)
@@ -249,66 +254,119 @@ event ChangeAnimation()
 			GroundSpeed = QuicksandGroundSpeed;
 		}
 	}
-	
-	if(bIsSliding)
-	{
-		return;
-	}
-	
-	if(bIsWalking)
-	{
-		for(i = 0; i < 4; i++)
-		{
-			MAs[i] = WalkAnims[i];
-		}
-		
-		U.HackMovementAnims(self, MAs);
-		
-		TurnLeftAnim = default.TurnLeftAnim;
-		TurnRightAnim = default.TurnRightAnim;
-	}
 	else
 	{
-		if(HasAnim(RunAnims[0]))
+		if(bIsWalking)
 		{
-			MAs[0] = RunAnims[0];
+			for(i = 0; i < 4; i++)
+			{
+				MAs[i] = WalkAnims[i];
+			}
+			
+			U.HackMovementAnims(self, MAs);
+			
+			TurnLeftAnim = default.TurnLeftAnim;
+			TurnRightAnim = default.TurnRightAnim;
+		}
+		else if(IsInState('StatePickupItem'))
+		{
+			if(HasAnim(CarryForwardAnimName))
+			{
+				MAs[0] = CarryForwardAnimName;
+			}
+			else
+			{
+				MAs[0] = default._MovementAnims[0];
+			}
+			
+			if(HasAnim(CarryBackwardAnimName))
+			{
+				MAs[1] = CarryBackwardAnimName;
+			}
+			else
+			{
+				MAs[1] = default._MovementAnims[1];
+			}
+			
+			if(HasAnim(CarryStrafeLeftAnimName))
+			{
+				MAs[2] = CarryStrafeLeftAnimName;
+			}
+			else
+			{
+				MAs[2] = default._MovementAnims[2];
+			}
+			
+			if(HasAnim(CarryStrafeRightAnimName))
+			{
+				MAs[3] = CarryStrafeRightAnimName;
+			}
+			else
+			{
+				MAs[3] = default._MovementAnims[3];
+			}
+			
+			if(HasAnim(CarryTurnLeftAnim))
+			{
+				TurnLeftAnim = CarryTurnLeftAnim;
+			}
+			else
+			{
+				TurnLeftAnim = default.TurnLeftAnim;
+			}
+			
+			if(HasAnim(CarryTurnRightAnim))
+			{
+				TurnRightAnim = CarryTurnRightAnim;
+			}
+			else
+			{
+				TurnRightAnim = default.TurnRightAnim;
+			}
 		}
 		else
 		{
-			MAs[0] = default._MovementAnims[0];
-		}
-		
-		if(HasAnim(RunAnims[1]))
-		{
-			MAs[1] = RunAnims[1];
-		}
-		else
-		{
-			MAs[1] = default._MovementAnims[1];
-		}
-		
-		if(HasAnim(RunAnims[2]))
-		{
-			MAs[2] = RunAnims[2];
-		}
-		else
-		{
-			MAs[2] = default._MovementAnims[2];
-		}
-		
-		if(HasAnim(RunAnims[3]))
-		{
-			MAs[3] = RunAnims[3];
-		}
-		else
-		{
-			MAs[3] = default._MovementAnims[3];
+			if(HasAnim(RunAnims[0]))
+			{
+				MAs[0] = RunAnims[0];
+			}
+			else
+			{
+				MAs[0] = default._MovementAnims[0];
+			}
+			
+			if(HasAnim(RunAnims[1]))
+			{
+				MAs[1] = RunAnims[1];
+			}
+			else
+			{
+				MAs[1] = default._MovementAnims[1];
+			}
+			
+			if(HasAnim(RunAnims[2]))
+			{
+				MAs[2] = RunAnims[2];
+			}
+			else
+			{
+				MAs[2] = default._MovementAnims[2];
+			}
+			
+			if(HasAnim(RunAnims[3]))
+			{
+				MAs[3] = RunAnims[3];
+			}
+			else
+			{
+				MAs[3] = default._MovementAnims[3];
+			}
+			
+			TurnLeftAnim = default.TurnLeftAnim;
+			TurnRightAnim = default.TurnRightAnim;
 		}
 		
 		U.HackMovementAnims(self, MAs);
-		
-		TurnLeftAnim = default.TurnLeftAnim;
-		TurnRightAnim = default.TurnRightAnim;
 	}
 	
 	IdleAnimName = GetIdleAnimName();
@@ -1434,17 +1492,7 @@ function bool ThrowSwitchClosestObject()
 		
 		dist = VSize2d(swtch.Location - Location);
 		
-		if(dist > 30.0 + swtch.CollisionRadius + CollisionRadius)
-		{
-			continue;
-		}
-		
-		if(swtch.Location.Z - swtch.CollisionHeight > Location.Z)
-		{
-			continue;
-		}
-		
-		if(swtch.Location.Z + swtch.CollisionHeight < Location.Z - CollisionHeight)
+		if(dist > 30.0 + swtch.CollisionRadius + CollisionRadius || swtch.Location.Z - swtch.CollisionHeight > Location.Z || swtch.Location.Z + swtch.CollisionHeight < Location.Z - CollisionHeight)
 		{
 			continue;
 		}
@@ -1468,7 +1516,7 @@ function bool ThrowSwitch(Actor Other)
 {
 	HP = U.GetHP();
 	
-	if(!(HP == self) || bShrink || !Other.IsA('KActor') || Physics != PHYS_Walking || !Controller.IsInState('PlayerWalking') || IsInState('stateThrowPotion') || IsInState('stateDrinkPotion') || IsInState('stateKnockBack') || IsInState('stateKnockForward') || IsInState('stateUpEndFront') || IsInState('stateUpEndBack') || IsInState('statePickupItem') || IsInState('StateCarryItem') || IsInState('stateThrowItem') || IsInState('stateThrowSwitch') || aHolding != none || !Other.IsA('Switch') || SHHeroName != Switch(Other).PlayerName)
+	if(!(HP == self) || bShrink || Other.IsA('KActor') || Physics != PHYS_Walking || !Controller.IsInState('PlayerWalking') || IsInState('stateThrowPotion') || IsInState('stateDrinkPotion') || IsInState('stateKnockBack') || IsInState('stateKnockForward') || IsInState('stateUpEndFront') || IsInState('stateUpEndBack') || IsInState('statePickupItem') || IsInState('StateCarryItem') || IsInState('stateThrowItem') || IsInState('stateThrowSwitch') || aHolding != none || !Other.IsA('Switch') || SHHeroName != Switch(Other).PlayerName)
 	{
 		return false;
 	}
@@ -3347,6 +3395,7 @@ function HeroInWater()
 	GroundSpeed = WaterGroundSpeed;
 	SetPropertyText("BaseMovementRate", string(WaterGroundSpeed));
 	fInWaterTime = 0.0;
+	ChangeAnimation();
 }
 
 function HeroOutOfWater()
@@ -3364,6 +3413,7 @@ function HeroOutOfWater()
 	}
 	
 	fInWaterTime = 0.0;
+	ChangeAnimation();
 }
 
 function Bump(Actor Other)
@@ -4088,11 +4138,6 @@ function name GetIdleAnimName()
 {
 	HP = U.GetHP();
 	
-	if(IsFighting())
-	{
-		return IdleFightAnimName;
-	}
-	
 	if(IsTired() && HP == self && U.GetHealth(self) > 0.0)
 	{
 		if(float(TiredBumpLineCount) % 40.0 == 0.0)
@@ -4103,13 +4148,21 @@ function name GetIdleAnimName()
 		TiredBumpLineCount++;
 	}
 	
-	if(!IsTired())
+	if(IsInState('StatePickupItem'))
 	{
-		return default.IdleAnimName;        
+		return CarryIdleAnimName;
+	}
+	else if(IsFighting())
+	{
+		return IdleFightAnimName;
+	}
+	else if(IsTired())
+	{
+		return IdleTiredAnimName;
 	}
 	else
 	{
-		return IdleTiredAnimName;
+		return default.IdleAnimName;
 	}
 }
 
@@ -4948,8 +5001,15 @@ state stateRunAttack
 		
 		for(i = 0; i < 4; i++)
 		{
-			_MovementAnims[i] = default._MovementAnims[i];
-			MAs[i] = _MovementAnims[i];
+			if(bInWater || bInQuicksand)
+			{
+				MAs[i] = WadeAnims[i];
+			}
+			else
+			{
+				_MovementAnims[i] = default._MovementAnims[i];
+				MAs[i] = _MovementAnims[i];
+			}
 		}
 		
 		U.HackMovementAnims(self, MAs);
@@ -5863,6 +5923,7 @@ state stateHeroDying
 		}
 	}
 }
+
 
 defaultproperties
 {
