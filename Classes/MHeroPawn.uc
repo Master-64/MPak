@@ -1754,7 +1754,7 @@ function bool DoJump(bool bUpdating)
 		return false;
 	}
 	
-	if(!bInWater && !bInQuicksand && !bCanWaterJump)
+	if((!bInWater && !bInQuicksand) || bCanWaterJump)
 	{
 		retvalue = KWPawn_DoJump(bUpdating);
 		CheckForJumpMagnets();
