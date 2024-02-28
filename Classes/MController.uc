@@ -104,14 +104,7 @@ event PlayerTick(float DeltaTime)
 	
 	CheckForCameraBlocking(DeltaTime);
 	
-	if(Pawn.IsA('MHeroPawn'))
-	{
-		if(MHeroPawn(Pawn).CanDoubleJump() && bPressedJump)
-		{
-			MHeroPawn(Pawn).DoDoubleJump(false);
-		}
-	}
-	else if(KWPawn(Pawn).CanDoubleJump() && bPressedJump)
+	if(KWPawn(Pawn).CanDoubleJump() && bPressedJump)
 	{
 		KWPawn(Pawn).DoDoubleJump(false);
 	}

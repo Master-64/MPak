@@ -18,6 +18,8 @@ function PostPickupLogic(Actor Other)
 {
 	local float fOrigHealAmount;
 	
+	PC = U.GetPC();
+	
 	fOrigHealAmount = fHealAmount;
 	
 	if(bHealAmountIsHealPercent)
@@ -35,6 +37,15 @@ function PostPickupLogic(Actor Other)
 	if(bScaleHealAmountWithShamrocks)
 	{
 		fHealAmount *= float(U.GetInventoryCount(class'ShamrockCollection') + 1);
+	}
+	
+	if(U.IsInBonusLevel())
+	{
+		if(PC.IsA('SHHeroController') && U.GetHP() == Other)
+		{
+			SHHeroController(PC).bonusHealth += U.Ceiling(fHealAmount);
+			SHHeroController(PC).SaveConfig();
+		}
 	}
 	
 	U.AddHealth(Pawn(Other), fHealAmount, bDontTakeKnockback, bBypassHealthCap);

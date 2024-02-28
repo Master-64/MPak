@@ -3995,7 +3995,7 @@ function TakeFallingDamage()
 		}
 		else
 		{
-			TakeDamage(10000.0, none, Location, U.Vec(0.0, 0.0, 0.0), class'fell');
+			TakeDamage(10000, none, Location, U.Vec(0.0, 0.0, 0.0), class'fell');
 		}
 	}
 	
