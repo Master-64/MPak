@@ -17,12 +17,21 @@ var ScriptedTrigger ST;
 
 event PostBeginPlay()
 {
+	local Actor A;
+	
+	super.PostBeginPlay();
+	
 	if(Event == 'None')
 	{
 		Event = Name;
 	}
 	
-	ST = Spawn(class'ScriptedTrigger');
+	if(!U.MFancySpawn(class'ScriptedTrigger', Location,, A))
+	{
+		return;
+	}
+	
+	ST = ScriptedTrigger(A);
 	ST.Event = Event;
 	ST.Actions = Actions;
 }

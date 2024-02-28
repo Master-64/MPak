@@ -405,11 +405,14 @@ function ScalePickupWithDistance() // Scales the pickup based on the current pla
 	
 	bHidden = iNewVisibilityRadius <= 0;
 	
-	for(i = 0; i < AmbientEmitter.Emitters.Length; i++)
+	if(AmbientEmitter != none)
 	{
-		if(AmbientEmitter.Emitters[i] != none)
+		for(i = 0; i < AmbientEmitter.Emitters.Length; i++)
 		{
-			AmbientEmitter.Emitters[i].Disabled = bHidden;
+			if(AmbientEmitter.Emitters[i] != none)
+			{
+				AmbientEmitter.Emitters[i].Disabled = bHidden;
+			}
 		}
 	}
 	
