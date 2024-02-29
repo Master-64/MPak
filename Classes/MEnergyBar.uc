@@ -48,9 +48,9 @@ function PostPickupLogic(Actor Other)
 		}
 	}
 	
-	U.AddHealth(Pawn(Other), fHealAmount, bDontTakeKnockback, bBypassHealthCap);
-	
 	TryBumpline(Other);
+	
+	U.AddHealth(Pawn(Other), fHealAmount, bDontTakeKnockback, bBypassHealthCap);
 	
 	fHealAmount = fOrigHealAmount;
 }
