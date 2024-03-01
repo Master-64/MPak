@@ -16,6 +16,7 @@ var() int iDoubleJumpCount, iAirJumpCount;
 var int iDoubleJumpCounter, iAirJumpCounter;
 var(Animation) name _MovementAnims[4];
 var(AnimTweaks) float _BaseMovementRate;
+var name nOldState;
 var float MJumpZ, fTimeSinceLastTiredDialog;
 var class<AIController> AIC;
 var KWHeroController PC;
@@ -76,6 +77,8 @@ event PostBeginPlay()
 	
 	U = GetUtils();
 	HP = U.GetHP();
+	
+	nOldState = GetStateName();
 	
 	if(HP == self)
 	{
@@ -3558,6 +3561,13 @@ event Tick(float DeltaTime)
 	
 	PC = U.GetPC();
 	HP = U.GetHP();
+	
+	if(nOldState == 'MountFinish' && GetStateName() != 'MountFinish')
+	{
+		Landed(Location);
+	}
+	
+	nOldState = GetStateName();
 	
 	if(IsTired() && HP == self)
 	{
