@@ -11,8 +11,9 @@ class MHeroPawn extends SHHeroPawn
 	Config(MPak);
 
 
-var() bool bCanMount, bCanWaterJump, bCanAirJump, bCannotJump, bCannotPunch, bCanJumpAttackWhileFalling, bLandSlowdown;
-var() int iDoubleJumpCount, iAirJumpCount;
+var() bool bCanMount, bCanWaterJump, bCanAirJump, bCannotJump, bCannotPunch, bCanJumpAttackWhileFalling, bLandSlowdown, bUseNewFallDamageSystem, bDisableLandBobbing, bDisableFallDamage, bUseBoneForHit;
+var() int iDoubleJumpCount, iAirJumpCount, iFirstAttackDamage, iSecondAttackDamage, iThirdAttackDamage, iThirdAttackSplashDamage, iRunAttackDamage, iSpecialAttackDamage;
+var() float fFatalFallDamageMultiplier, fLandingBobMultiplier, fDamageMultiplier, fTiredHealth, fTiredHealthPercent, fMinTiredDialogTime, fTiredDialogChance, fBlinkChance, fFightingIdleRangeMultiplier, fHitBumplineChance;
 var int iDoubleJumpCounter, iAirJumpCounter;
 var(Animation) name _MovementAnims[4];
 var(AnimTweaks) float _BaseMovementRate;
@@ -166,6 +167,8 @@ event PostBeginPlay()
 		Tag = NewTag;
 	}
 	
+	SetUnLitOnLowEndMachine();
+	
 	bGameFinishedLoading = false;
 }
 
@@ -222,21 +225,13 @@ event ChangeAnimation()
 	local array<name> MAs;
 	local int i;
 	
-	if(Controller != none && Controller.bControlAnimations)
+	if(bIsSliding || (Controller != none && Controller.bControlAnimations))
 	{
 		return;
 	}
-	
-	PlayWaiting();
-	PlayMoving();
 	
 	GroundSpeed = GroundRunSpeed;
 	WalkingPct = GroundWalkSpeed / GroundSpeed;
-	
-	if(bIsSliding)
-	{
-		return;
-	}
 	
 	if(bInWater || bInQuicksand)
 	{
@@ -502,7 +497,7 @@ event PreSaveGame()
 
 event PostLoadGame(bool bLoadFromSaveGame)
 {
-	local int bonuslevelcoins;
+	local int bonuslevelcoins, bonuslevelHealth;
 	local bonusLevelTransferTimer bt;
 	local SaveTimer ST;
 	
@@ -526,11 +521,6 @@ event PostLoadGame(bool bLoadFromSaveGame)
 	RemovePotion();
 	bNeedToSave = false;
 	
-	foreach AllActors(class'Shrek', shrekky)
-	{
-		break;
-	}
-	
 	if(IsBadStateForSaving())
 	{
 		if(Controller != none)
@@ -549,11 +539,20 @@ event PostLoadGame(bool bLoadFromSaveGame)
 		if(bLoadFromSaveGame)
 		{
 			bonuslevelcoins = class'SHHeroController'.default.bonuscoins;
+			bonuslevelHealth = class'SHHeroController'.default.bonusHealth;
 			
 			if(bonuslevelcoins > 0)
 			{
 				U.AddInventory(class'CoinCollection', bonuslevelcoins);
 				SHHeroController(PC).bonuscoins = 0;
+				SHHeroController(PC).SaveConfig();
+				bNeedToSave = true;
+			}
+			
+			if(bonuslevelHealth > 0)
+			{
+				U.SetHealth(self, bonuslevelHealth, true);
+				SHHeroController(PC).bonusHealth = 0;
 				SHHeroController(PC).SaveConfig();
 				bNeedToSave = true;
 			}
@@ -576,10 +575,7 @@ event PostLoadGame(bool bLoadFromSaveGame)
 	}
 }
 
-function AddAnimNotifys()
-{
-	SetUnLitOnLowEndMachine();
-}
+function AddAnimNotifys();
 
 event TravelPreAccept();
 
@@ -595,11 +591,11 @@ function OnEvent(name EventName)
 		case 'Restart':
 			if(MaxHealth > 0.0)
 			{
-				U.SetHealth(self, MaxHealth);
+				U.SetHealth(self, MaxHealth, true);
 			}
 			else
 			{
-				U.SetHealth(self, U.GetMaxHealth(self));
+				U.SetHealth(self, U.GetMaxHealth(self), true);
 			}
 			
 			break;
@@ -1195,7 +1191,7 @@ function OnBounceExtra(bool bCanMoveWhileJumping)
 
 function Landed(vector N)
 {
-	local Actor HitActor;
+	local LandingObject HitActor;
 	local vector HitLocation, HitNormal, TraceStart, TraceEnd, Dir;
 	local rotator Rot;
 	local BouncePad BP;
@@ -1230,8 +1226,19 @@ function Landed(vector N)
 	
 	bFallingAutoDecel2d = false;
 	
-	LandBob = FMin(50.0, 0.055 * Velocity.Z);
-	TakeFallingDamage();
+	if(!bDisableLandBobbing)
+	{
+		LandBob = FMin(50.0 * (fLandingBobMultiplier / 0.055), fLandingBobMultiplier * Velocity.Z);
+	}
+	else
+	{
+		LandBob = 0.0;
+	}
+	
+	if(!bDisableFallDamage)
+	{
+		TakeFallingDamage();
+	}
 	
 	if(U.GetHealth(self) > 0.0)
 	{
@@ -1261,16 +1268,13 @@ function Landed(vector N)
 	TraceStart = Location;
 	TraceEnd = TraceStart + ((U.Vec(0.0, 0.0, -1.0) * 2.0) * CollisionHeight);
 	
-	foreach TraceActors(class'Actor', HitActor, HitLocation, HitNormal, TraceEnd, TraceStart, U.Vec(0.0, 0.0, 0.0))
+	foreach TraceActors(class'LandingObject', HitActor, HitLocation, HitNormal, TraceEnd, TraceStart, U.Vec(0.0, 0.0, 0.0))
 	{
 		if(HitActor != none)
 		{
-			if(HitActor.IsA('LandingObject'))
-			{
-				LandingObject(HitActor).GotoState('stateLanding');
-				
-				return;
-			}
+			HitActor.GotoState('stateLanding');
+			
+			return;
 		}
 	}
 	
@@ -1282,16 +1286,13 @@ function Landed(vector N)
 		TraceStart = Location + (Dir * CollisionRadius);
 		TraceEnd = TraceStart + ((U.Vec(0.0, 0.0, -1.0) * 2.0) * CollisionHeight);
 		
-		foreach TraceActors(class'Actor', HitActor, HitLocation, HitNormal, TraceEnd, TraceStart, U.Vec(0.0, 0.0, 0.0))
+		foreach TraceActors(class'LandingObject', HitActor, HitLocation, HitNormal, TraceEnd, TraceStart, U.Vec(0.0, 0.0, 0.0))
 		{
 			if(HitActor != none)
 			{
-				if(HitActor.IsA('LandingObject'))
-				{
-					LandingObject(HitActor).GotoState('stateLanding');
-					
-					return;
-				}
+				HitActor.GotoState('stateLanding');
+				
+				return;
 			}
 		}
 		
@@ -1311,9 +1312,9 @@ function Landed(vector N)
 
 function SetFuturePlayerLabel()
 {
-	local Shrek shrk;
+	local MShrek shrk;
 	
-	foreach AllActors(class'Shrek', shrk)
+	foreach AllActors(class'MShrek', shrk)
 	{
 		shrk.SetPropertyText("FuturePlayerLabel", U.GetHP().GetPropertyText("Label"));
 		
@@ -1558,7 +1559,7 @@ function bool MovingForward()
 	}
 	
 	Vel = Velocity;
-	Vel.Z = 0;
+	Vel.Z = 0.0;
 	Vel = Normal(Vel);
 	R = Rotation;
 	R.Pitch = 0;
@@ -2264,6 +2265,8 @@ function TakeDamage(int Damage, Pawn instigatedBy, vector HitLocation, vector Mo
 {
 	local bool forward;
 	
+	Damage = U.Ceiling(float(Damage) * fDamageMultiplier);
+	
 	PC = U.GetPC();
 	HP = U.GetHP();
 	
@@ -2272,14 +2275,7 @@ function TakeDamage(int Damage, Pawn instigatedBy, vector HitLocation, vector Mo
 		return;
 	}
 	
-	if(DamageType == class'EnvironmentDamage' && Physics != PHYS_Walking && U.GetHealth(self) - float(Damage) > 0.0)
-	{
-		bNoKnockback = true;
-	}
-	else
-	{
-		Pawn_TakeDamage(Damage, instigatedBy, HitLocation, Momentum, DamageType);
-	}
+	Pawn_TakeDamage(Damage, instigatedBy, HitLocation, Momentum, DamageType);
 	
 	if(U.GetHealth(self) <= 0.0)
 	{
@@ -2324,8 +2320,7 @@ function TakeDamage(int Damage, Pawn instigatedBy, vector HitLocation, vector Mo
 	}
 	else if(bNoKnockback)
 	{
-		bNoKnockback = false;
-		U.AddHealth(HP, -float(Damage));
+		U.AddHealth(HP, -float(Damage), bNoKnockback);
 		ShrekController(PC).UpdateHealthManagerStatus();
 		
 		if(Rand(2) == 0)
@@ -2373,7 +2368,7 @@ protected function Pawn_TakeDamage(int Damage, Pawn instigatedBy, Vector HitLoca
 	
 	Momentum = Momentum / Mass;
 	actualDamage = Level.Game.ReduceDamage(Damage, self, instigatedBy, HitLocation, Momentum, DamageType);
-	U.AddHealth(self, -float(actualDamage));
+	U.AddHealth(self, -float(actualDamage), bNoKnockback);
 	
 	if(HitLocation == U.Vec(0.0, 0.0, 0.0))
 	{
@@ -2431,7 +2426,7 @@ function bool IsTired()
 		}
 	}
 	
-	if(U.GetHealth(self) < 50.0)
+	if(U.GetHealth(self) < fTiredHealth || U.GetHealth(self) / U.GetMaxHealth(self) < fTiredHealthPercent)
 	{
 		return true;
 	}
@@ -2532,7 +2527,7 @@ function HitSHPawn(Actor HitActor, int hitdamage, array<Sound> SoundArray, class
 function HitSHPropsStatic(Actor HitActor, int hitdamage, array<Sound> SoundArray, class<DamageType> DamageType)
 {
 	PlayAttackSound(SoundArray);
-	HitActor.TakeDamage(hitdamage, self, U.Vec(0, 0, 0), U.Vec(0, 0, 0), DamageType);
+	HitActor.TakeDamage(hitdamage, self, U.Vec(0.0, 0.0, 0.0), U.Vec(0.0, 0.0, 0.0), DamageType);
 	ShPropsStatic(HitActor).bSHPropsStaticWasHitInThisAttack = true;
 }
 
@@ -2580,7 +2575,7 @@ function bool CanUsePotion()
 
 function bool CanUseBoneForHit()
 {
-	if(IsInState('stateRunAttack') || AttackInfo.Length == 0)
+	if(IsInState('stateRunAttack') || AttackInfo.Length == 0 || !bUseBoneForHit)
 	{
 		return false;
 	}
@@ -3332,7 +3327,7 @@ function HitEverybody(bool EndOfSpecialAttack)
 			continue;
 		}
 		
-		HitSHPawn(shp, 4.0, SpecialAttackSounds, class'SpecialAttackDamage');
+		HitSHPawn(shp, iSpecialAttackDamage, SpecialAttackSounds, class'SpecialAttackDamage');
 	}
 	
 	foreach AllActors(class'ShPropsStatic', shprst)
@@ -3352,14 +3347,14 @@ function HitEverybody(bool EndOfSpecialAttack)
 		
 		if(!shp.IsA('BreakableObject'))
 		{
-			HitSHPropsStatic(shprst, 4, SpecialAttackSounds, class'SpecialAttackDamage');
+			HitSHPropsStatic(shprst, iSpecialAttackDamage, SpecialAttackSounds, class'SpecialAttackDamage');
 			
 			continue;
 		}
 		
 		if(EndOfSpecialAttack)
 		{
-			shp.TakeDamage(4.0, self, U.Vec(0.0, 0.0, 0.0), U.Vec(0.0, 0.0, 0.0), class'SpecialAttackDamage');
+			shp.TakeDamage(iSpecialAttackDamage, self, U.Vec(0.0, 0.0, 0.0), U.Vec(0.0, 0.0, 0.0), class'SpecialAttackDamage');
 		}
 	}
 }
@@ -3571,9 +3566,9 @@ event Tick(float DeltaTime)
 	
 	if(IsTired() && HP == self)
 	{
-		if(!PC.bInCutScene() && fTimeSinceLastTiredDialog >= 10.0)
+		if(!PC.bInCutScene() && fTimeSinceLastTiredDialog >= fMinTiredDialogTime)
 		{
-			if(U.PercentChance(0.003))
+			if(U.PercentChance(fTiredDialogChance))
 			{
 				if(U.GetHealth(self) > 0.0)
 				{
@@ -3598,7 +3593,7 @@ event Tick(float DeltaTime)
 	{
 		fBlinkingTime -= DeltaTime;
 		
-		if(Rand(200) == 0 && fBlinkingTime <= 0.0)
+		if(U.PercentChance(fBlinkChance) && fBlinkingTime <= 0.0)
 		{
 			StartBlinkAnimation();
 		}
@@ -3801,7 +3796,7 @@ event Tick(float DeltaTime)
 			if(U.GetHealth(self) - poisonDamageAmount > 0.0)
 			{
 				damageCounter = 0.0;
-				U.AddHealth(self, -poisonDamageAmount);
+				U.AddHealth(self, -poisonDamageAmount, bNoKnockback);
 			}
 			else
 			{
@@ -3816,7 +3811,7 @@ event Tick(float DeltaTime)
 function StartBossEncounter(BossEncounterTrigger bet)
 {
 	local HudItemHealthBossPib hp;
-	local Donkey dnk;
+	local MDonkey dnk;
 	
 	HUD = U.GetHUD();
 
@@ -3854,7 +3849,7 @@ function StartBossEncounter(BossEncounterTrigger bet)
 	
 	if(bet.boss.IsA('BossPib'))
 	{
-		foreach AllActors(class'Donkey', dnk)
+		foreach DynamicActors(class'MDonkey', dnk)
 		{
 			dnk.GotoState('stateStartCheerInBossPibBattle');
 		}
@@ -3863,7 +3858,7 @@ function StartBossEncounter(BossEncounterTrigger bet)
 
 function StopBossEncounter()
 {
-	local Donkey dnk;
+	local MDonkey dnk;
 	
 	HUD = U.GetHUD();
 	
@@ -3874,7 +3869,7 @@ function StopBossEncounter()
 	
 	if(aBoss.IsA('BossPib'))
 	{
-		foreach AllActors(class'Donkey', dnk)
+		foreach DynamicActors(class'MDonkey', dnk)
 		{
 			dnk.GotoState('stateEndCheerInBossPibBattle');
 		}
@@ -3981,6 +3976,13 @@ function TakeFallingDamage()
 		return;
 	}
 	
+	if(bIsSliding)
+	{
+		FallOrginLocation = Location;
+		
+		return;
+	}
+	
 	foreach TouchingActors(class'CusionVolume', cv)
 	{
 		FallOrginLocation = Location;
@@ -4003,9 +4005,13 @@ function TakeFallingDamage()
 		{
 			FallOrginLocation = Location;
 		}
+		else if(bUseNewFallDamageSystem)
+		{
+			TakeDamage(U.Ceiling(float((U.Ceiling(Abs(FallOrginLocation.Z - Location.Z)) - DeathIfFallDistance) / 4) * fFatalFallDamageMultiplier), none, Location, U.Vec(0.0, 0.0, 0.0), class'fell');
+		}
 		else
 		{
-			TakeDamage(10000, none, Location, U.Vec(0.0, 0.0, 0.0), class'fell');
+			TakeDamage(U.GetHealth(self), none, Location, U.Vec(0.0, 0.0, 0.0), class'fell');
 		}
 	}
 	
@@ -4082,9 +4088,9 @@ function UseSHJumpMagnet()
 
 function BFGMSwitchControlToPawn(string newname)
 {
-	local ShHeroPawn NewPawn;
+	local SHHeroPawn NewPawn;
 	
-	foreach DynamicActors(class'ShHeroPawn', NewPawn)
+	foreach DynamicActors(class'SHHeroPawn', NewPawn)
 	{
 		if(NewPawn.Label ~= newname)
 		{
@@ -4103,7 +4109,7 @@ function BFGMSwitchControlToPawn(string newname)
 	NewPawn.SetLocation(Location);
 	NewPawn.SetRotation(Rotation);
 	NewPawn.aBoss = aBoss;
-	U.SetHealth(NewPawn, U.GetHealth(self));
+	U.SetHealth(NewPawn, U.GetHealth(self), true);
 	ShrekCreature(NewPawn).fLiveInBFGM = float(GetPropertyText("LiveAsCreature"));
 	ShrekCreature(NewPawn).ParentCollisionHeight = CollisionHeight;
 	NewPawn.SetCollision(true, true, true);
@@ -4113,21 +4119,26 @@ function BFGMSwitchControlToPawn(string newname)
 		SetPropertyText("PrevCreature", newname);
 	}
 	
-	if(newname ~= "Chicken")
+	switch(Caps(newname))
 	{
-		InterestMgr.CommentMgr.SayComment('FGM_FGMChicken', aBoss.Tag,, true,,,, "BumpDialog");
-	}
-	else if(newname ~= "Mouse")
-	{
-		InterestMgr.CommentMgr.SayComment('FGM_FGMMouse', aBoss.Tag,, true,,,, "BumpDialog");
-	}
-	else if(newname ~= "Frog")
-	{
-		InterestMgr.CommentMgr.SayComment('FGM_FGMFrog', aBoss.Tag,, true,,,, "BumpDialog");
-	}
-	else if(newname ~= "Human")
-	{
-		InterestMgr.CommentMgr.SayComment('SHK_FGMTransform', 'Shrek',, true,,,, "BumpDialog");
+		case "Chicken":
+			InterestMgr.CommentMgr.SayComment('FGM_FGMChicken', aBoss.Tag,, true,,,, "BumpDialog");
+			
+			break;
+		case "Mouse":
+			InterestMgr.CommentMgr.SayComment('FGM_FGMMouse', aBoss.Tag,, true,,,, "BumpDialog");
+			
+			break;
+		case "Frog":
+			InterestMgr.CommentMgr.SayComment('FGM_FGMFrog', aBoss.Tag,, true,,,, "BumpDialog");
+			
+			break;
+		case "Human":
+			InterestMgr.CommentMgr.SayComment('SHK_FGMTransform', 'Shrek',, true,,,, "BumpDialog");
+			
+			break;
+		default:
+			break;
 	}
 	
 	SwitchControlToPawn(newname);
@@ -4145,7 +4156,7 @@ function bool IsFighting()
 		return false;
 	}
 	
-	foreach VisibleCollidingActors(class'shpawn', shp, 300.0, Location, true)
+	foreach VisibleCollidingActors(class'shpawn', shp, 300.0 * fFightingIdleRangeMultiplier, Location, true)
 	{
 		if(shp.bRequireFightIdle)
 		{			
@@ -4153,7 +4164,7 @@ function bool IsFighting()
 		}
 	}
 	
-	foreach VisibleCollidingActors(class'BossPawn', bp, 1000.0, Location, true)
+	foreach VisibleCollidingActors(class'BossPawn', bp, 1000.0 * fFightingIdleRangeMultiplier, Location, true)
 	{
 		if(bp != none)
 		{			
@@ -4190,7 +4201,7 @@ function PlayPickupEnergyBarBumpLine()
 {
 	HP = U.GetHP();
 	
-	if(!(HP == self) || U.GetHealth(self) <= 0.0 || !IsTired())
+	if(!(HP == self) || U.GetHealth(self) <= 0.0)
 	{
 		return;
 	}
@@ -4270,12 +4281,9 @@ function SayHitBumpLine()
 		return;
 	}
 	
-	if(bSayCombatDialog)
+	if(bSayCombatDialog && U.PercentChance(fHitBumplineChance))
 	{
-		if(Rand(2) == 0)
-		{
-			InterestMgr.CommentMgr.SayComment(HitBumpLines, Tag,, true,,, self, "BumpDialog");
-		}
+		InterestMgr.CommentMgr.SayComment(HitBumpLines, Tag,, true,,, self, "BumpDialog");
 	}
 }
 
@@ -4565,9 +4573,11 @@ function KillAllEnemiesAround(float killradius)
 			continue;
 		}
 		
-		HitSHPawn(shp, 1000.0, Attack3Sounds, class'RegularAttackDamage');
+		HitSHPawn(shp, iThirdAttackSplashDamage, Attack3Sounds, class'RegularAttackDamage');
 	}
 }
+
+function UpdateShrekHealth();
 
 auto state StateIdle
 {
@@ -4722,11 +4732,6 @@ state stateThrowPotion
 
 	function TakeDamage(int Damage, Pawn instigatedBy, vector HitLocation, vector Momentum, class<DamageType> DamageType)
 	{
-		if(Damage < 1000)
-		{
-			return;
-		}
-		
 		super.TakeDamage(Damage, instigatedBy, HitLocation, Momentum, DamageType);
 	}
 	
@@ -4786,11 +4791,6 @@ state stateDrinkPotion
 	
 	function TakeDamage(int Damage, Pawn instigatedBy, vector HitLocation, vector Momentum, class<DamageType> DamageType)
 	{
-		if(Damage < 1000)
-		{
-			return;
-		}
-		
 		super.TakeDamage(Damage, instigatedBy, HitLocation, Momentum, DamageType);
 	}
 	
@@ -5050,7 +5050,7 @@ state stateRunAttack
 		global.Tick(DeltaTime);
 		
 		AnimFrame = GetAnimFrame(4);
-		HitSomebody(1, Attack1Sounds, NewRunAttackAnim, AnimFrame);
+		HitSomebody(iRunAttackDamage, Attack1Sounds, NewRunAttackAnim, AnimFrame);
 		
 		if(!MovingForward())
 		{
@@ -5173,7 +5173,7 @@ state stateAttack1
 		V = (deltav * DeltaTime) * AnimRate;
 		MoveAheadABit(V);
 		AnimFrame = GetAnimFrame(ATTACKCHANNEL_UPPER);
-		HitSomebody(1, Attack1Sounds, animseq, AnimFrame);
+		HitSomebody(iFirstAttackDamage, Attack1Sounds, animseq, AnimFrame);
 	}
 
 	event BeginState()
@@ -5256,11 +5256,11 @@ state stateAttack2
 		
 		if(animseq == StartAttackAnim1)
 		{
-			HitSomebody(1, Attack1Sounds, animseq, AnimFrame);
+			HitSomebody(iFirstAttackDamage, Attack1Sounds, animseq, AnimFrame);
 		}
 		else if(animseq == StartAttackAnim2)
 		{
-			HitSomebody(2, Attack2Sounds, animseq, AnimFrame);
+			HitSomebody(iSecondAttackDamage, Attack2Sounds, animseq, AnimFrame);
 		}
 		
 		R = Rotation;
@@ -5362,7 +5362,7 @@ state stateAttack3
 		
 		if(animseq == StartAttackAnim2)
 		{
-			HitSomebody(2, Attack2Sounds, animseq, AnimFrame);
+			HitSomebody(iSecondAttackDamage, Attack2Sounds, animseq, AnimFrame);
 		}
 		
 		if(animseq != StartAttackAnim3)
@@ -5370,7 +5370,7 @@ state stateAttack3
 			return;
 		}
 		
-		HitSomebody(3, Attack3Sounds, animseq, AnimFrame);
+		HitSomebody(iThirdAttackDamage, Attack3Sounds, animseq, AnimFrame);
 	}
 
 	function AnimEnd(int Channel)
@@ -5434,11 +5434,11 @@ state stateAttack3Attack1
 		
 		if(animseq == StartAttackAnim2)
 		{
-			HitSomebody(2, Attack2Sounds, animseq, AnimFrame);
+			HitSomebody(iSecondAttackDamage, Attack2Sounds, animseq, AnimFrame);
 		}
 		else if(animseq == StartAttackAnim3)
 		{
-			HitSomebody(3, Attack3Sounds, animseq, AnimFrame);
+			HitSomebody(iThirdAttackDamage, Attack3Sounds, animseq, AnimFrame);
 		}
 	}
 	
@@ -5949,6 +5949,24 @@ defaultproperties
 	bLandSlowdown=true
 	iAirJumpCount=1
 	iDoubleJumpCount=1
+	fFatalFallDamageMultiplier=1.0
+	fLandingBobMultiplier=0.055
+	fDamageMultiplier=1.0
+	fTiredHealth=50.0
+	fTiredHealthPercent=0.33
+	bUseBoneForHit=true
+	bUseNewFallDamageSystem=true
+	fMinTiredDialogTime=10.0
+	fTiredDialogChance=0.003
+	fBlinkChance=0.005
+	fFightingIdleRangeMultiplier=1.0
+	fHitBumplineChance=0.5
+	iFirstAttackDamage=1
+	iSecondAttackDamage=2
+	iThirdAttackDamage=3
+	iThirdAttackSplashDamage=3
+	iRunAttackDamage=2
+	iSpecialAttackDamage=9
 	FootPrintDecal=class'SHGame.FootPrintProjector'
 	maxTimePoisoned=5.0
 	poisonDamageAmount=1.0

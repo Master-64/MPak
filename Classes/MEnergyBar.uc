@@ -43,7 +43,7 @@ function PostPickupLogic(Actor Other)
 	{
 		if(PC.IsA('SHHeroController') && U.GetHP() == Other)
 		{
-			SHHeroController(PC).bonusHealth += U.Ceiling(fHealAmount);
+			SHHeroController(PC).bonusHealth = U.GetHealth(HP);
 			SHHeroController(PC).SaveConfig();
 		}
 	}

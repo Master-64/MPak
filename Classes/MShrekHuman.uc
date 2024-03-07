@@ -10,13 +10,18 @@ class MShrekHuman extends MHeroPawn
 	Config(MPak);
 
 
+struct MinMaxStruct
+{
+	var() int Min, Max;
+};
+
 var ShrekSword Sword;
 var string PrevCreature;
 var() name QuickThrowStartAnimName, QuickThrowLoopAnimName, QuickThrowEndAnimName, QuickThrowBoneName;
 var bool bQuickThrowWasSpawn;
 var int iFoodThrowInARow;
 var(BossFGM) float ThrowTime, ThrowFoodTime, ThrowAccuracy, ThrowFoodAccuracy, ThrowProtection, LiveAsCreature;
-var(BossFGM) KWGame.Range FoodThrowInARow;
+var(BossFGM) MinMaxStruct FoodThrowInARow;
 var() Material SwordSkin;
 var StaticMesh OriginalSwordStaticMesh, PowerfulSwordStaticMesh;
 
