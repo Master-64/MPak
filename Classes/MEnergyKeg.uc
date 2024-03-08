@@ -18,13 +18,13 @@ function PostPickupLogic(Actor Other)
 	if(!bDoNotFullHeal)
 	{
 		U.SetHealth(Pawn(Other), U.GetMaxHealth(Pawn(Other)));
-		
-		TryBumpline(Other);
 	}
 	else
 	{
 		super.PostPickupLogic(Other);
 	}
+	
+	TryBumpline(Other);
 }
 
 

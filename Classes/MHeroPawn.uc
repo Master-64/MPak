@@ -11,9 +11,9 @@ class MHeroPawn extends SHHeroPawn
 	Config(MPak);
 
 
-var() bool bCanMount, bCanWaterJump, bCanAirJump, bCannotJump, bCannotPunch, bCanJumpAttackWhileFalling, bLandSlowdown, bUseNewFallDamageSystem, bDisableLandBobbing, bDisableFallDamage, bUseBoneForHit;
+var() bool bCanMount, bCanWaterJump, bCanAirJump, bCannotJump, bCannotPunch, bCanJumpAttackWhileFalling, bLandSlowdown, bUseNewFallDamageSystem, bDisableLandBobbing, bDisableFallDamage, bUseBoneForHit, bAllowJumpAttackPrebuffering, bCanJumpDuringShrink, bLandingCancelsAttack;
 var() int iDoubleJumpCount, iAirJumpCount, iFirstAttackDamage, iSecondAttackDamage, iThirdAttackDamage, iThirdAttackSplashDamage, iRunAttackDamage, iSpecialAttackDamage;
-var() float fFatalFallDamageMultiplier, fLandingBobMultiplier, fDamageMultiplier, fTiredHealth, fTiredHealthPercent, fMinTiredDialogTime, fTiredDialogChance, fBlinkChance, fFightingIdleRangeMultiplier, fHitBumplineChance;
+var() float fFatalFallDamageMultiplier, fLandingBobMultiplier, fDamageMultiplier, fTiredHealth, fTiredHealthPercent, fMinTiredDialogTime, fTiredDialogChance, fBlinkChance, fDelayAfterDeathBeforeReload, fFightingIdleRangeMultiplier, fHitBumplineChance;
 var int iDoubleJumpCounter, iAirJumpCounter;
 var(Animation) name _MovementAnims[4];
 var(AnimTweaks) float _BaseMovementRate;
@@ -1202,6 +1202,11 @@ function Landed(vector N)
 	iAirJumpCounter = 0;
 	iDoubleJumpCounter = 0;
 	
+	if(bLandingCancelsAttack && IsAttacking())
+	{
+		GotoState('StateIdle');
+	}
+	
 	if(bUseBouncePad)
 	{
 		if(Velocity.Z < (-1.0 * MaxFallSpeed))
@@ -1744,7 +1749,7 @@ function bool DoJump(bool bUpdating)
 	local name animseq;
 	local bool retvalue;
 	
-	if(bFrontEndPlayer || bShrink || IsAttacking() || aHolding != none || bDoingDoubleJump || bUseBouncePad || bUseJumpMagnet || bCannotJump)
+	if(bFrontEndPlayer || (bShrink && !bCanJumpDuringShrink) || IsAttacking() || aHolding != none || bDoingDoubleJump || bUseBouncePad || bUseJumpMagnet || bCannotJump)
 	{
 		return false;
 	}
@@ -1979,7 +1984,10 @@ function DoSomeAction()
 			return;
 		}
 		
-		GotoState('stateContinueAirAttack');
+		if(bAllowJumpAttackPrebuffering)
+		{
+			GotoState('stateContinueAirAttack');
+		}
 		
 		return;
 	}
@@ -4440,7 +4448,6 @@ function StartToShrinkDown()
 	bShrink = true;
 	savespeeds[0] = int(GroundRunSpeed);
 	savespeeds[1] = int(GroundWalkSpeed);
-	savespeeds[2] = int(BaseMovementRate);
 	savespeeds[2] = int(GetPropertyText("BaseMovementRate"));
 	savespeeds[3] = int(GroundSpeed);
 	savespeeds[4] = int(WaterGroundSpeed);
@@ -5052,6 +5059,13 @@ state stateRunAttack
 		AnimFrame = GetAnimFrame(4);
 		HitSomebody(iRunAttackDamage, Attack1Sounds, NewRunAttackAnim, AnimFrame);
 		
+		if(bIsSliding)
+		{
+			GotoState('StateIdle');
+			
+			return;
+		}
+		
 		if(!MovingForward())
 		{
 			bPressDuringRunAttack = false;
@@ -5642,7 +5656,7 @@ state stateKnockBack
 		{
 			PlayAnim(CarryKnockBackEndAnimName, RandRange(0.6, 0.7), 0.0, 22);
 		}
-		else if((animseq == KnockBackEndAnimName) || animseq == CarryKnockBackEndAnimName)
+		else if(animseq == KnockBackEndAnimName || animseq == CarryKnockBackEndAnimName)
 		{
 			LoopAnim(GetIdleAnimName(), 1.0);
 		}
@@ -5685,7 +5699,7 @@ state stateKnockForward
 		Acceleration *= U.Vec(0.0, 0.0, 1.0);
 		animseq = GetAnimSequence(22);
 		
-		if((animseq != KnockForwardStartAnimName) && animseq != CarryKnockForwardStartAnimName)
+		if(animseq != KnockForwardStartAnimName && animseq != CarryKnockForwardStartAnimName)
 		{
 			return;
 		}
@@ -5923,7 +5937,7 @@ state stateHeroDying
 	InterestMgr.CommentMgr.SayComment(DyingBumpLines, Tag,, true,,, self, "BumpDialog");
 	PlayAnim(PlayerDyingAnim, 1.0, 0.2);
 	FinishAnim();
-	Sleep(1.0);
+	Sleep(fDelayAfterDeathBeforeReload);
 	
 	HP = U.GetHP();
 	
@@ -5967,6 +5981,8 @@ defaultproperties
 	iThirdAttackSplashDamage=3
 	iRunAttackDamage=2
 	iSpecialAttackDamage=9
+	fDelayAfterDeathBeforeReload=1.0
+	bAllowJumpAttackPrebuffering=true
 	FootPrintDecal=class'SHGame.FootPrintProjector'
 	maxTimePoisoned=5.0
 	poisonDamageAmount=1.0

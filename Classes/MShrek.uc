@@ -590,12 +590,15 @@ defaultproperties
 	HeadRotElement=RE_YawPos
 	JumpSounds(0)=Sound'Shrek.Jump'
 	LandingStone(0)=Sound'Shrek.land'
+	LandingRug(0)=none
 	LandingWood(0)=Sound'Shrek.land'
 	LandingWet(0)=Sound'Shrek.land'
 	LandingGrass(0)=Sound'Shrek.land'
+	LandingMetal(0)=none
 	LandingDirt(0)=Sound'Shrek.land'
 	LandingHay(0)=Sound'Shrek.land'
 	LandingLeaf(0)=Sound'Shrek.land'
+	LandingSnow(0)=none
 	LandingSand(0)=Sound'Shrek.land'
 	LandingMud(0)=Sound'Shrek.land'
 	LandingNone(0)=Sound'Shrek.land'

@@ -15,7 +15,7 @@ var(GameState) const editconst string GameStateMasterList;
 var(GameState) travel string CurrentGameState;
 var Sword PibSword;
 var() class<Emitter> HairFlyEmitter;
-var() array<Sound> BodyFallSounds, LandingSounds, GetUpSounds, SwordUnsheathSounds, SwordPutAwaySounds, SwordHitSounds;
+var() array<Sound> BodyFallSounds, GetUpSounds, SwordUnsheathSounds, SwordPutAwaySounds, SwordHitSounds;
 var() Texture SwordRibbonTexName;
 var() Material SwordSkin;
 var() float fDelay;
@@ -187,6 +187,8 @@ event AnimNotifySwordIsOut()
 	PibSword.WeaponAttachRotation = PibSword.SecondaryWeaponAttachRotation;
 	PibSword.AttachWeaponToKWPawn(self);
 	PibSword.bIsOut = true;
+	
+	PlayOwnedSound(GetRandSound(SwordUnsheathSounds), SLOT_None, 1.0, true, 800.0, RandRange(0.8, 1.1));
 }
 
 event AnimNotifySwordIsOutForPunch1()
@@ -207,6 +209,8 @@ event AnimNotifySwordIsIn()
 	PibSword.AttachWeaponToKWPawn(self);
 	PibSword.bIsOut = false;
 	DestroyRibbonEmitters();
+	
+	PlayOwnedSound(GetRandSound(SwordPutAwaySounds), SLOT_None, 1.0, true, 800.0, RandRange(0.8, 1.1));
 }
 
 function SetEverythingForClimbingLadder()
@@ -638,8 +642,6 @@ defaultproperties
 	BodyFallSounds(1)=Sound'PussInBoots.body_fall2'
 	BodyFallSounds(2)=Sound'PussInBoots.body_fall3'
 	BodyFallSounds(3)=Sound'PussInBoots.body_fall4'
-	LandingSounds(0)=Sound'PussInBoots.landing2'
-	LandingSounds(1)=Sound'PussInBoots.landing3'
 	GetUpSounds(0)=Sound'PussInBoots.get_up'
 	SwordUnsheathSounds(0)=Sound'PussInBoots.sword_unsheath'
 	SwordPutAwaySounds(0)=Sound'PussInBoots.sword_put_away'
@@ -694,36 +696,34 @@ defaultproperties
 	RunAttackSounds(0)=Sound'PussInBoots.action_triple_swish1'
 	RunAttackSounds(1)=Sound'PussInBoots.action_triple_swish2'
 	RunAttackSounds(2)=Sound'PussInBoots.action_triple_swish3'
-	Attack1Sounds(0)=Sound'PussInBoots.action_swish1'
-	Attack1Sounds(1)=Sound'PussInBoots.action_swish2'
-	Attack1Sounds(2)=Sound'PussInBoots.action_swish3'
-	Attack1Sounds(3)=Sound'PussInBoots.action_swish4'
-	Attack1Sounds(4)=Sound'PussInBoots.action_swish5'
-	Attack1Sounds(5)=Sound'PussInBoots.action_swish6'
-	Attack1Sounds(6)=Sound'PussInBoots.action_swish7'
-	Attack1Sounds(7)=Sound'PussInBoots.action_swish8'
-	Attack1Sounds(8)=Sound'PussInBoots.action_swish9'
-	Attack1Sounds(9)=Sound'PussInBoots.action_swish10'
-	Attack2Sounds(0)=Sound'PussInBoots.action_swish1'
-	Attack2Sounds(1)=Sound'PussInBoots.action_swish2'
-	Attack2Sounds(2)=Sound'PussInBoots.action_swish3'
-	Attack2Sounds(3)=Sound'PussInBoots.action_swish4'
-	Attack2Sounds(4)=Sound'PussInBoots.action_swish5'
-	Attack2Sounds(5)=Sound'PussInBoots.action_swish6'
-	Attack2Sounds(6)=Sound'PussInBoots.action_swish7'
-	Attack2Sounds(7)=Sound'PussInBoots.action_swish8'
-	Attack2Sounds(8)=Sound'PussInBoots.action_swish9'
-	Attack2Sounds(9)=Sound'PussInBoots.action_swish10'
-	Attack3Sounds(0)=Sound'PussInBoots.action_swish1'
-	Attack3Sounds(1)=Sound'PussInBoots.action_swish2'
-	Attack3Sounds(2)=Sound'PussInBoots.action_swish3'
-	Attack3Sounds(3)=Sound'PussInBoots.action_swish4'
-	Attack3Sounds(4)=Sound'PussInBoots.action_swish5'
-	Attack3Sounds(5)=Sound'PussInBoots.action_swish6'
-	Attack3Sounds(6)=Sound'PussInBoots.action_swish7'
-	Attack3Sounds(7)=Sound'PussInBoots.action_swish8'
-	Attack3Sounds(8)=Sound'PussInBoots.action_swish9'
-	Attack3Sounds(9)=Sound'PussInBoots.action_swish10'
+	Attack1Sounds(0)=Sound'PussInBoots.sword_hit1'
+	Attack1Sounds(1)=Sound'PussInBoots.sword_hit2'
+	Attack1Sounds(2)=Sound'PussInBoots.sword_hit3'
+	Attack1Sounds(3)=Sound'PussInBoots.sword_hit4'
+	Attack1Sounds(4)=Sound'PussInBoots.sword_hit5'
+	Attack1Sounds(5)=Sound'PussInBoots.sword_hit6'
+	Attack1Sounds(6)=Sound'PussInBoots.sword_hit7'
+	Attack1Sounds(7)=Sound'PussInBoots.sword_hit8'
+	Attack1Sounds(8)=Sound'PussInBoots.sword_hit9'
+	Attack2Sounds(0)=Sound'PussInBoots.sword_hit1'
+	Attack2Sounds(1)=Sound'PussInBoots.sword_hit2'
+	Attack2Sounds(2)=Sound'PussInBoots.sword_hit3'
+	Attack2Sounds(3)=Sound'PussInBoots.sword_hit4'
+	Attack2Sounds(4)=Sound'PussInBoots.sword_hit5'
+	Attack2Sounds(5)=Sound'PussInBoots.sword_hit6'
+	Attack2Sounds(6)=Sound'PussInBoots.sword_hit7'
+	Attack2Sounds(7)=Sound'PussInBoots.sword_hit8'
+	Attack2Sounds(8)=Sound'PussInBoots.sword_hit9'
+	Attack3Sounds(0)=Sound'PussInBoots.sword_hit1'
+	Attack3Sounds(1)=Sound'PussInBoots.sword_hit2'
+	Attack3Sounds(2)=Sound'PussInBoots.sword_hit3'
+	Attack3Sounds(3)=Sound'PussInBoots.sword_hit4'
+	Attack3Sounds(4)=Sound'PussInBoots.sword_hit5'
+	Attack3Sounds(5)=Sound'PussInBoots.sword_hit6'
+	Attack3Sounds(6)=Sound'PussInBoots.sword_hit7'
+	Attack3Sounds(7)=Sound'PussInBoots.sword_hit8'
+	Attack3Sounds(8)=Sound'PussInBoots.sword_hit9'
+	DyingSound=Sound'PussInBoots.faint'
 	ThrowPotionSound=Sound'PussInBoots.pib_throw_potion'
 	DrinkPotionSound=Sound'PussInBoots.pib_drink_potion'
 	EmoteSoundJump(0)=Sound'AllDialog.pc_pib_pibemote_50'
@@ -917,11 +917,29 @@ defaultproperties
 	JumpSounds(7)=Sound'PussInBoots.action_swish8'
 	JumpSounds(8)=Sound'PussInBoots.action_swish9'
 	JumpSounds(9)=Sound'PussInBoots.action_swish10'
-	LandingStone(0)=Sound'Footsteps.F_PIB_stone1'
-	LandingWood(0)=Sound'Footsteps.F_PIB_wood1'
-	LandingWet(0)=Sound'Footsteps.F_PIB_wet1'
-	LandingDirt(0)=Sound'Footsteps.F_PIB_dirt1'
-	LandingNone(0)=Sound'Footsteps.F_PIB_default1'
+	LandingStone(0)=Sound'PussInBoots.landing2'
+	LandingStone(1)=Sound'PussInBoots.landing3'
+	LandingRug(0)=none
+	LandingWood(0)=Sound'PussInBoots.landing2'
+	LandingWood(1)=Sound'PussInBoots.landing3'
+	LandingWet(0)=Sound'PussInBoots.landing2'
+	LandingWet(1)=Sound'PussInBoots.landing3'
+	LandingGrass(0)=Sound'PussInBoots.landing2'
+	LandingGrass(1)=Sound'PussInBoots.landing3'
+	LandingMetal(0)=none
+	LandingDirt(0)=Sound'PussInBoots.landing2'
+	LandingDirt(1)=Sound'PussInBoots.landing3'
+	LandingHay(0)=Sound'PussInBoots.landing2'
+	LandingHay(1)=Sound'PussInBoots.landing3'
+	LandingLeaf(0)=Sound'PussInBoots.landing2'
+	LandingLeaf(1)=Sound'PussInBoots.landing3'
+	LandingSnow(0)=none
+	LandingSand(0)=Sound'PussInBoots.landing2'
+	LandingSand(1)=Sound'PussInBoots.landing3'
+	LandingMud(0)=Sound'PussInBoots.landing2'
+	LandingMud(1)=Sound'PussInBoots.landing3'
+	LandingNone(0)=Sound'PussInBoots.landing2'
+	LandingNone(1)=Sound'PussInBoots.landing3'
 	FootstepsStone(0)=Sound'Footsteps.F_PIB_stone1'
 	FootstepsStone(1)=Sound'Footsteps.F_PIB_stone2'
 	FootstepsStone(2)=Sound'Footsteps.F_PIB_stone3'
