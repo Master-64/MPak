@@ -22,7 +22,7 @@ var bool bQuickThrowWasSpawn;
 var int iFoodThrowInARow;
 var(BossFGM) float ThrowTime, ThrowFoodTime, ThrowAccuracy, ThrowFoodAccuracy, ThrowProtection, LiveAsCreature;
 var(BossFGM) MinMaxStruct FoodThrowInARow;
-var() Material SwordSkin;
+var() Material SwordSkin, PowerfulSwordSkin;
 var StaticMesh OriginalSwordStaticMesh, PowerfulSwordStaticMesh;
 
 
@@ -383,7 +383,6 @@ function SetVisibleTextures()
 	super.SetVisibleTextures();
 	
 	Sword.SetOpacity(1.0);
-	Sword.Skins[0] = SwordSkin;
 }
 
 function SetInvisibleTextures()
@@ -407,6 +406,7 @@ function ShowStrengthAttributes()
 	}
 	
 	Sword.SetStaticMesh(PowerfulSwordStaticMesh);
+	Sword.Skins[0] = PowerfulSwordSkin;
 }
 
 function HideStrengthAttributes()
@@ -414,6 +414,7 @@ function HideStrengthAttributes()
 	super.HideStrengthAttributes();
 	
 	Sword.SetStaticMesh(OriginalSwordStaticMesh);
+	Sword.Skins[0] = SwordSkin;
 }
 
 function vector GetRunAttackEmitterLocation()
@@ -544,6 +545,7 @@ defaultproperties
 	LiveAsCreature=30.0
 	FoodThrowInARow=(Min=5,Max=9)
 	SwordSkin=Texture'Character_Props_tx.handsome_tx'
+	PowerfulSwordSkin=Texture'Character_Props_tx.hssmacker_tx'
 	OriginalSwordStaticMesh=StaticMesh'Character_Props.handsome_sword'
 	PowerfulSwordStaticMesh=StaticMesh'Character_Props.hs_slapper'
 	NewTag=ShrekHuman

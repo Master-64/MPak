@@ -17,13 +17,14 @@ var Sword PibSword;
 var() class<Emitter> HairFlyEmitter;
 var() array<Sound> BodyFallSounds, GetUpSounds, SwordUnsheathSounds, SwordPutAwaySounds, SwordHitSounds;
 var() Texture SwordRibbonTexName;
-var() Material SwordSkin;
+var() Material SwordSkin, PowerfulSwordSkin;
 var() float fDelay;
 var() bool bInCutScene, bShowNecklace;
 var() name NecklaceAttachBone;
 var() vector NecklaceAttachOffset;
 var() rotator NecklaceAttachRotation;
 var bool bOldbShowNecklace;
+var byte bOldAmbientGlow;
 var PibLeftGlove LeftGlove;
 var PibRightGlove RightGlove;
 var PibNecklace Necklace;
@@ -386,14 +387,15 @@ function StartToShrinkDown()
 {
 	super.StartToShrinkDown();
 	
-	AmbientGlow = 64;
+	bOldAmbientGlow = AmbientGlow;
+	AmbientGlow += 64;
 }
 
 function StartToShrinkUp()
 {
 	super.StartToShrinkUp();
 	
-	AmbientGlow = 0;
+	AmbientGlow = bOldAmbientGlow;
 }
 
 function Tick(float DeltaTime)
@@ -465,7 +467,6 @@ function SetVisibleTextures()
 	super.SetVisibleTextures();
 	
 	PibSword.SetOpacity(1.0);
-	PibSword.Skins[0] = SwordSkin;
 }
 
 function SetInvisibleTextures()
@@ -500,6 +501,20 @@ function HideStrengthAttributes()
 	RightGlove.bHidden = true;
 }
 
+event bool Mount(vector Delta, Actor A)
+{
+	local bool bReturn;
+	
+	bReturn = super.Mount(Delta, A);
+	
+	if(bReturn && PibSword.bIsOut)
+	{
+		AnimNotifySwordIsIn();
+	}
+	
+	return bReturn;
+}
+
 state stateHeldByTheScruffIdle
 {
 	function name GetIdleAnimName()
@@ -507,14 +522,14 @@ state stateHeldByTheScruffIdle
 		return 'HeldBytheScruffidle';
 	}
 
-	function BeginState()
+	event BeginState()
 	{
 		TurnLeftAnim = 'None';
 		TurnRightAnim = 'None';
 		LoopAnim('HeldBytheScruffidle');
 	}
 
-	function EndState()
+	event EndState()
 	{
 		TurnLeftAnim = default.TurnLeftAnim;
 		TurnRightAnim = default.TurnRightAnim;
