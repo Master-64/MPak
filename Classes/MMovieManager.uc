@@ -124,4 +124,5 @@ defaultproperties
 {
 	bCanBeTriggered=true
 	fMusicFadeTime=1.0
+	Tag=MMovieManager
 }
