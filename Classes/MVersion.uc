@@ -15,6 +15,6 @@ var() string Version, ModName;
 
 defaultproperties
 {
-	Version="Build 17"
+	Version="Build 18"
 	ModName="MPak"
 }

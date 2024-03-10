@@ -2157,7 +2157,48 @@ function bool LoadAGame(int iSlot, optional bool bLoadCurrentSaveSlot)
 	return false;
 }
 
-function bool PlayMovie(string sMovieName, bool bUseSound, optional bool bLoopMovie, optional bool bNoSmartPlay, optional string sMovieName512, optional string sMovieName640, optional string sMovieName1024)
+function bool PlayMovie(string sMovieName, bool bUseSound, optional bool bLoopMovie)
+{
+	local Movie M;
+	
+	if(HUD == none)
+	{
+		GetHUD();
+	}
+	
+	GetHP();
+	
+	M = GetCurrentMovie();
+	
+	if(M == none)
+	{
+		return false;
+	}
+	
+	if(M.IsPlaying())
+	{
+		return false;
+	}
+	
+	HUD.SetPropertyText("MoviePosX", "-1");
+	HUD.SetPropertyText("MoviePosY", "-1");
+	
+	if(sMovieName == "")
+	{
+		return false;
+	}
+	
+	M.Play(FormatMovieString(sMovieName), bUseSound, bLoopMovie);
+	
+	if(M.IsPlaying())
+	{
+		HP.GotoState('statePlayerInMovie');
+	}
+	
+	return M.IsPlaying();
+}
+
+function bool FancyPlayMovie(string sMovieName, bool bUseSound, optional bool bLoopMovie, optional bool bNoSmartPlay, optional string sMovieName512, optional string sMovieName640, optional string sMovieName1024)
 {
 	local Movie M;
 	
@@ -3186,6 +3227,15 @@ function HackMovementAnims(SHHeroPawn SHHP, array<name> MovementAnims)
 	{
 		SHHP.WadeAnims[i] = OldWadeAnims[i];
 	}
+}
+
+function bool DoesFileExist(string sFileName)
+{
+	local array<string> FileContents;
+	
+	LoadStringArray(FileContents, sFileName);
+	
+	return FileContents.Length != 0;
 }
 
 
