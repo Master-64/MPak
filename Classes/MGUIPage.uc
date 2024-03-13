@@ -12,6 +12,9 @@ class MGUIPage extends SHGUIPage
 	Config(MPak);
 
 
+var float fGUIScale;
+var bool bEscapeClosesPage;
+var string sOldResolution;
 var KWHeroController PC;
 var Pawn HP, ICP;
 var KWHud HUD;
@@ -23,6 +26,12 @@ var MUtils U;
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
 	U = GetUtils(MyController);
+	
+	fGUIScale = U.GetGUIScale();
+	
+	sOldResolution = U.CC("GetCurrentRes");
+	
+	__OnDraw__Delegate = InternalOnDraw;
 	
 	super.InitComponent(MyController, MyOwner);
 }
@@ -39,18 +48,37 @@ function MUtils GetUtils(GUIController C)
 	return C.ViewportOwner.Actor.Spawn(class'MUtils');
 }
 
-function bool InternalOnClick(GUIComponent Sender)
+event bool InternalOnDraw(Canvas Canvas)
+{
+	local string sRes;
+	
+	sRes = U.CC("GetCurrentRes");
+	
+	if(sRes != sOldResolution)
+	{
+		ResolutionChanged();
+	}
+	
+	sOldResolution = sRes;
+	
+	return true;
+}
+
+event bool InternalOnClick(GUIComponent Sender)
 {
 	super.InternalOnClick(Sender);
 	
 	return true;
 }
 
-function bool InternalOnKeyEvent(out byte Key, out byte State, float Delta)
+event bool InternalOnKeyEvent(out byte Key, out byte State, float Delta)
 {
-	if(Key == 27 && State == 1)
+	if(bEscapeClosesPage)
 	{
-		ClosePage();
+		if(Key == 27 && State == 1)
+		{
+			ClosePage();
+		}
 	}
 	
 	return false;
@@ -64,6 +92,24 @@ function GUIComponent CenterComponent(GUIComponent GUIC)
 	return GUIC;
 }
 
+function GUIComponent ScaleComponent(GUIComponent GUIC)
+{
+	GUIC.WinHeight *= fGUIScale;
+	GUIC.WinWidth *= fGUIScale;
+	
+	return GUIC;
+}
+
+function GUIComponent OrientComponent(GUIComponent GUIC)
+{
+	ScaleComponent(GUIC);
+	CenterComponent(GUIC);
+	
+	return GUIC;
+}
+
+event ResolutionChanged();
+
 function ClosePage()
 {
 	UnPause();
@@ -73,5 +119,6 @@ function ClosePage()
 
 defaultproperties
 {
+	bEscapeClosesPage=true
 	WinHeight=1.0
 }

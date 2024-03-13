@@ -160,6 +160,8 @@ auto state PlayerStart
 	
 	if(nPostStartingEvent != 'None')
 	{
+		Sleep(0.01);
+		
 		TriggerEvent(nPostStartingEvent, none, none);
 	}
 	

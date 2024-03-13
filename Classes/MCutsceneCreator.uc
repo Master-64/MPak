@@ -83,7 +83,7 @@ event PostBeginPlay()
 			{
 				TargetActor.Event = U.MergeNames('CUT__', CCActions[i].CutsceneName);
 				
-				if(MIs[i] != none)
+				if(MIs[i] != none && !TargetActor.IsA('MInfo'))
 				{
 					MIs[i].Destroy();
 				}
@@ -95,7 +95,7 @@ event PostBeginPlay()
 				{
 					CutSceneTrigger(TargetActor).AlternateEvent = U.MergeNames('CUT__', CCActions[i].CutsceneName);
 					
-					if(MIs[i] != none)
+					if(MIs[i] != none && !TargetActor.IsA('MInfo'))
 					{
 						MIs[i].Destroy();
 					}

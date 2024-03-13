@@ -3238,6 +3238,20 @@ function bool DoesFileExist(string sFileName)
 	return FileContents.Length != 0;
 }
 
+static function float GetHUDScale(Canvas C)
+{
+	return (float(C.SizeY) / 768.0 + float(C.SizeX) / 1024.0) / 2.0;
+}
+
+function float GetGUIScale()
+{
+	local vector V;
+	
+	V = GetResolution();
+	
+	return (V.Y / 768.0 + V.X / 1024.0) / 2.0;
+}
+
 
 // KnowWonder Functions
 
