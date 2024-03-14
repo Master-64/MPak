@@ -14,6 +14,7 @@ class MHUDItem extends KWHudItem
 	Config(MPak);
 
 
+var bool bReInitialize;
 var KWHeroController PC;
 var Pawn HP, ICP;
 var KWHud HUD;
@@ -44,7 +45,7 @@ event PostLoadGame(bool bLoadFromSaveGame)
 {
 	local KWHud HUD;
 	
-	if(!bLoadFromSaveGame)
+	if(!bLoadFromSaveGame || !bReInitialize)
 	{
 		return;
 	}
@@ -71,4 +72,10 @@ state Invisible // Makes the HUD item invisible
 
 auto state Visible // Makes the HUD item visible
 {
+}
+
+
+defaultproperties
+{
+	bReInitialize=true
 }

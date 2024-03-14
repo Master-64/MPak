@@ -113,6 +113,8 @@ auto state PlayerStart
 	
 	if(sStartingMusicName != "")
 	{
+		Sleep(0.01);
+		
 		U.PlayAMusic(sStartingMusicName, fMusicFadeTime);
 	}
 	
