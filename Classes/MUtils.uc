@@ -3252,6 +3252,30 @@ function float GetGUIScale()
 	return (V.Y / 768.0 + V.X / 1024.0) / 2.0;
 }
 
+function float CalculateHorizontalFOV(float fVerticalFOV)
+{
+	local vector vRes;
+	local float fAspectRatio;
+	
+	vRes = GetResolution();
+	
+	fAspectRatio = vRes.X / vRes.Y;
+	
+	return 2.0 * ATan(Tan(fVerticalFOV * PI / 360.0) * fAspectRatio, 1.0) * 180.0 / PI;
+}
+
+function float CalculateVerticalFOV(float fHorizontalFOV)
+{
+	local vector vRes;
+	local float fAspectRatio;
+	
+	vRes = GetResolution();
+	
+	fAspectRatio = vRes.X / vRes.Y;
+	
+	return 2.0 * ATan(Tan(fHorizontalFOV * PI / 360.0) / fAspectRatio, 1.0) * 180.0 / PI;
+}
+
 
 // KnowWonder Functions
 
