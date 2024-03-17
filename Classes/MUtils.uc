@@ -919,6 +919,11 @@ private function ModifyHealth(Pawn P, float fHealth, optional bool bDontTakeKnoc
 			DT = class'fell';
 		}
 		
+		if(P.IsA('MHeroPawn'))
+		{
+			fHealthDifference *= MHeroPawn(P).fDamageMultiplier;
+		}
+		
 		if(P.IsA('SHHeroPawn'))
 		{
 			SHHeroPawn_TakeDamage(SHHeroPawn(P), fHealthDifference, none, P.Location, Vect(0.0, 0.0, 0.0), DT, bDontTakeKnockback, bPlaySound);

@@ -3269,7 +3269,7 @@ function Died(Controller Killer, class<DamageType> DamageType, vector HitLocatio
 {
 	HP = U.GetHP();
 	
-	U.SetHealth(self, 0.0);
+	U.SetHealth(self, 0.0, true);
 	
 	if(Controller != none && Killer != none)
 	{
