@@ -2101,7 +2101,13 @@ function Screenshot()
 
 function RestartSound()
 {
+	local string S;
+	
+	S = GetCurrentMusic();
+	
 	CC("Sound_Reboot");
+	
+	PlayAMusic(S);
 }
 
 function SetNearClip(float F)
