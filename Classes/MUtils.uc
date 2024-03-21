@@ -1285,7 +1285,7 @@ private function ModifyShamrocks(int iShamrockCount, optional bool bBypassHealth
 	}
 }
 
-function Sound PlayASound(optional string sSoundString, optional Sound SoundOverride, optional float fVolume, optional bool bMoveCurrentPlayersMouth)
+function Sound PlayASound(optional string sSoundString, optional Sound SoundOverride, optional float fVolume, optional bool bMoveCurrentPlayersMouth, optional Actor.ESoundSlot SoundSlot)
 {
 	local Sound SoundToPlay;
 	local string MB;
@@ -1323,7 +1323,7 @@ function Sound PlayASound(optional string sSoundString, optional Sound SoundOver
 		HP.SetPropertyText("MouthBone", "");
 	}
 	
-	PC.ClientPlaySound(SoundToPlay, true, fVolume);
+	PC.ClientPlaySound(SoundToPlay, true, fVolume, SoundSlot);
 	
 	if(!bMoveCurrentPlayersMouth)
 	{
@@ -1333,7 +1333,7 @@ function Sound PlayASound(optional string sSoundString, optional Sound SoundOver
 	return SoundToPlay;
 }
 
-function Sound PlayASound3D(Actor A, optional string sSoundString, optional Sound SoundOverride, optional float fVolume, optional float fRadius, optional float fPitch, optional bool bMoveCurrentPlayersMouth)
+function Sound PlayASound3D(Actor A, optional string sSoundString, optional Sound SoundOverride, optional float fVolume, optional float fRadius, optional float fPitch, optional bool bMoveCurrentPlayersMouth, optional Actor.ESoundSlot SoundSlot)
 {
 	local Sound SoundToPlay;
 	local string MB;
@@ -1374,7 +1374,7 @@ function Sound PlayASound3D(Actor A, optional string sSoundString, optional Soun
 		A.SetPropertyText("MouthBone", "");
 	}
 	
-	A.PlaySound(SoundToPlay, SLOT_None, fVolume, true, fRadius, fPitch, true);
+	A.PlaySound(SoundToPlay, SoundSlot, fVolume, true, fRadius, fPitch, true);
 	
 	if(!bMoveCurrentPlayersMouth && A.IsA('Pawn'))
 	{
@@ -3285,6 +3285,35 @@ function float CalculateVerticalFOV(float fHorizontalFOV)
 	fAspectRatio = vRes.X / vRes.Y;
 	
 	return 2.0 * ATan(Tan(fHorizontalFOV * PI / 360.0) / fAspectRatio, 1.0) * 180.0 / PI;
+}
+
+function RemoveText(out string Source, string TextToRemove)
+{
+    local int StartIndex;
+	
+    StartIndex = InStr(Source, TextToRemove);
+	
+    if(StartIndex > -1)
+    {
+        Source = Left(Source, StartIndex - 1) $ Mid(Source, StartIndex + Len(TextToRemove));
+    }
+}
+
+function LipSyncDialog(KWPawn LipSyncOwner, Sound DialogSound, string sDialogLine)
+{
+	local MLipSyncDelegate LSD;
+	
+	LSD = Spawn(class'MLipSyncDelegate');
+	
+	if(LSD == none)
+	{
+		return;
+	}
+	
+	LSD.LSData.LipSyncOwner = LipSyncOwner;
+	LSD.LSData.DialogSound = DialogSound;
+	LSD.LSData.sDialogLine = sDialogLine;
+	LSD.Trigger(self, none);
 }
 
 

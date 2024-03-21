@@ -13,7 +13,7 @@ class MACTION_DeliverLocalizedDialog extends MScriptedAction
 var(Action) class<KWPawn> PawnClass;
 var(Action) name PawnTag;
 var(Action) string sDialogName, Optional_sSubtitleFileName, Optional_sExplicitDialogString;
-var(Action) bool bPlaySound, bNo3DSound, bDontDisplaySubtitle, Optional_bUseExplicitSoundSlot;
+var(Action) bool bPlaySound, bNo3DSound, bDontDisplaySubtitle, Optional_bUseExplicitSoundSlot, bModifiedBumpline;
 var(Action) float fVolume, Optional_fExplicitDisplayDuration;
 var(Action) KWGame.ESoundSlot Optional_SoundSlot;
 
@@ -52,6 +52,11 @@ function bool InitActionFor(ScriptedController C)
 	}
 	
 	TargetPawn.DeliverLocalizedDialog(sDialogName, bPlaySound, Optional_fExplicitDisplayDuration, Optional_sSubtitleFileName, Optional_sExplicitDialogString, bNo3DSound, fVolume, bDontDisplaySubtitle, Optional_bUseExplicitSoundSlot, Optional_SoundSlot);
+	
+	if(bModifiedBumpline)
+	{
+		U.LipSyncDialog(TargetPawn, Sound(DynamicLoadObject("AllDialog." $ sDialogName, class'Sound')), Localize("all", sDialogName, "HPdialog"));
+	}
 	
 	return false;
 }

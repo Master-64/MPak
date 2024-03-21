@@ -6,15 +6,17 @@
 // *****************************************************
 
 
-class MVersion extends MInfo
+class MCSACTION_MSay extends MCSACTION_Say
+	EditInLineNew
+	CollapseCategories
+	HideCategories(Object)
 	Config(MPak);
 
 
-var() string Version, ModName;
+var() bool bModifiedBumpline;
 
 
 defaultproperties
 {
-	Version="Build 26"
-	ModName="MPak"
+	ActionString="MSay"
 }

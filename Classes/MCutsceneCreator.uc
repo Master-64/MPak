@@ -260,6 +260,10 @@ function string CreateActionLine(MCSAction A) // Returns a line of text that rep
 			S = S @ string(MCSACTION_ChangeLevel(A).nLevelName);
 			
 			break;
+		case class'MCSACTION_CC':
+			S = S @ MCSACTION_CC(A).sConsoleCommand;
+			
+			break;
 		case class'MCSACTION_Comment':
 			S = S @ MCSACTION_Comment(A).sComment;
 			
@@ -514,6 +518,20 @@ function string CreateActionLine(MCSAction A) // Returns a line of text that rep
 			if(MCSACTION_Say(A).nPawnTag != MCSACTION_Say(A).default.nPawnTag)
 			{
 				S = S @ "Pawn=" $ string(MCSACTION_Say(A).nPawnTag);
+			}
+			
+			break;
+		case class'MCSACTION_MSay':
+			S = S @ string(MCSACTION_MSay(A).nDialogName);
+			
+			if(MCSACTION_MSay(A).nPawnTag != MCSACTION_MSay(A).default.nPawnTag)
+			{
+				S = S @ "Pawn=" $ string(MCSACTION_MSay(A).nPawnTag);
+			}
+			
+			if(MCSACTION_MSay(A).bModifiedBumpline)
+			{
+				S = S @ "Mod";
 			}
 			
 			break;

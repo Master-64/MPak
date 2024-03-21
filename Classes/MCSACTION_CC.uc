@@ -6,15 +6,17 @@
 // *****************************************************
 
 
-class MVersion extends MInfo
+class MCSACTION_CC extends MCSAction
+	EditInLineNew
+	CollapseCategories
+	HideCategories(Object)
 	Config(MPak);
 
 
-var() string Version, ModName;
+var() string sConsoleCommand;
 
 
 defaultproperties
 {
-	Version="Build 26"
-	ModName="MPak"
+	ActionString="CC"
 }

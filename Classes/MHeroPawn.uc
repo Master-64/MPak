@@ -11,7 +11,7 @@ class MHeroPawn extends SHHeroPawn
 	Config(MPak);
 
 
-var() bool bCanMount, bCanWaterJump, bCanAirJump, bCannotJump, bCannotPunch, bCanJumpAttackWhileFalling, bLandSlowdown, bUseNewFallDamageSystem, bDisableLandBobbing, bDisableFallDamage, bUseBoneForHit, bAllowJumpAttackPrebuffering, bCanJumpDuringShrink, bLandingCancelsAttack;
+var() bool bCanMount, bCanWaterJump, bCanAirJump, bCannotJump, bCannotPunch, bCanJumpAttackWhileFalling, bLandSlowdown, bUseNewFallDamageSystem, bDisableLandBobbing, bDisableFallDamage, bUseBoneForHit, bAllowJumpAttackPrebuffering, bCanJumpDuringShrink, bLandingCancelsAttack, bModifiedBumplines;
 var() int iDoubleJumpCount, iAirJumpCount, iFirstAttackDamage, iSecondAttackDamage, iThirdAttackDamage, iThirdAttackSplashDamage, iRunAttackDamage, iSpecialAttackDamage;
 var() float fFatalFallDamageMultiplier, fLandingBobMultiplier, fDamageMultiplier, fTiredHealth, fTiredHealthPercent, fMinTiredDialogTime, fTiredDialogChance, fBlinkChance, fDelayAfterDeathBeforeReload, fFightingIdleRangeMultiplier, fHitBumplineChance;
 var int iDoubleJumpCounter, iAirJumpCounter;
@@ -4585,6 +4585,20 @@ function KillAllEnemiesAround(float killradius)
 }
 
 function UpdateShrekHealth();
+
+function float DeliverLocalizedDialog(string DlgID, bool bPlaySound, optional float fDisplayDuration, optional string IntFileName, optional string ExplicitString, optional bool No3D, optional float fVolume, optional bool bNoSubtitle, optional bool bUseSlotIn, optional Actor.ESoundSlot SlotIn)
+{
+	local float fReturn;
+	
+	fReturn = super.DeliverLocalizedDialog(DlgID, bPlaySound, fDisplayDuration, IntFileName, ExplicitString, No3D, fVolume, bNoSubtitle, bUseSlotIn, SlotIn);
+	
+	if(bModifiedBumplines)
+	{
+		U.LipSyncDialog(self, Sound(DynamicLoadObject("AllDialog." $ DlgID, class'Sound')), Localize("all", DlgID, "HPdialog"));
+	}
+	
+	return fReturn;
+}
 
 auto state StateIdle
 {
