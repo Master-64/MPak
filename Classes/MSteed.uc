@@ -14,7 +14,7 @@ var SteedHelmet SHelmet;
 var() Sound SteedFaintSound, SteedFaintDropSound;
 
 
-function PostBeginPlay()
+event PostBeginPlay()
 {
 	super.PostBeginPlay();
 	
@@ -23,12 +23,20 @@ function PostBeginPlay()
 	SHelmet.bHidden = true;
 }
 
+event Destroyed()
+{
+	if(SHelmet != none)
+	{
+		SHelmet.Destroy();
+	}
+}
+
 function CreateRibbonEmittersForAttack3()
 {
 	CreateRibbonEmitters(2);
 }
 
-function AddAnimNotifys()
+event AddAnimNotifys()
 {
 	local MeshAnimation MeshAnim;
 
@@ -91,9 +99,22 @@ function HideStrengthAttributes()
 
 defaultproperties
 {
+	fSpeedChargeMultiplier=1.4
+	GroundSpeed=750.0
+	GroundRunSpeed=750.0
+	GroundCarrySpeed=650.0
+	iSecondAttackDamage=6
+	iThirdAttackDamage=2
+	bCanAirJump=true
+	iDoubleJumpCount=0
+	iAirJumpCount=2
+	fDoubleJumpHeight=128.0
+	fJumpDist=261.82
+	AccelRate=1024
+	bCanMount=false
 	SteedFaintSound=Sound'Steed.faint'
 	SteedFaintDropSound=Sound'Steed.faint_drop'
-	NewTag=Donkey
+	NewTag=Steed
 	AttackMoveAhead=100.0
 	fxSwingingDeathClass=class'SHGame.Steed_plow'
 	SHHeroName=Steed

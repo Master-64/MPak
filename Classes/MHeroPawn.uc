@@ -11,9 +11,9 @@ class MHeroPawn extends SHHeroPawn
 	Config(MPak);
 
 
-var() bool bCanMount, bCanWaterJump, bCanAirJump, bCannotJump, bCannotPunch, bCanJumpAttackWhileFalling, bLandSlowdown, bUseNewFallDamageSystem, bDisableLandBobbing, bDisableFallDamage, bUseBoneForHit, bAllowJumpAttackPrebuffering, bCanJumpDuringShrink, bLandingCancelsAttack, bModifiedBumplines;
+var() bool bCanMount, bCanWaterJump, bCanAirJump, bCannotJump, bCannotPunch, bCanJumpAttackWhileFalling, bLandSlowdown, bUseNewFallDamageSystem, bDisableLandBobbing, bDisableFallDamage, bUseBoneForHit, bAllowJumpAttackPrebuffering, bCanJumpDuringShrink, bLandingCancelsAttack, bModifiedBumplines, bCanSpeedCharge;
 var() int iDoubleJumpCount, iAirJumpCount, iFirstAttackDamage, iSecondAttackDamage, iThirdAttackDamage, iThirdAttackSplashDamage, iRunAttackDamage, iSpecialAttackDamage;
-var() float fFatalFallDamageMultiplier, fLandingBobMultiplier, fDamageMultiplier, fTiredHealth, fTiredHealthPercent, fMinTiredDialogTime, fTiredDialogChance, fBlinkChance, fDelayAfterDeathBeforeReload, fFightingIdleRangeMultiplier, fHitBumplineChance;
+var() float fFatalFallDamageMultiplier, fLandingBobMultiplier, fDamageMultiplier, fTiredHealth, fTiredHealthPercent, fMinTiredDialogTime, fTiredDialogChance, fBlinkChance, fDelayAfterDeathBeforeReload, fFightingIdleRangeMultiplier, fHitBumplineChance, fSpeedChargeMultiplier, fWeaponDamageScale;
 var int iDoubleJumpCounter, iAirJumpCounter;
 var(Animation) name _MovementAnims[4];
 var(AnimTweaks) float _BaseMovementRate;
@@ -575,7 +575,7 @@ event PostLoadGame(bool bLoadFromSaveGame)
 	}
 }
 
-function AddAnimNotifys();
+event AddAnimNotifys();
 
 event TravelPreAccept();
 
@@ -1189,7 +1189,7 @@ function OnBounceExtra(bool bCanMoveWhileJumping)
 	}
 }
 
-function Landed(vector N)
+event Landed(vector N)
 {
 	local LandingObject HitActor;
 	local vector HitLocation, HitNormal, TraceStart, TraceEnd, Dir;
@@ -1892,6 +1892,8 @@ function DoDoubleJump(bool bUpdating)
 	SetPhysics(PHYS_Falling);
 	PlayAnim(GetIdleAnimName(),,, 0);
 	PlayDoubleJump();
+	
+	Spawn(LandedFX,,, U.Vec(Location.X, Location.Y, Location.Z - CollisionHeight / 2.0));
 }
 
 function bool StartQuickThrow()
@@ -2328,7 +2330,6 @@ function TakeDamage(int Damage, Pawn instigatedBy, vector HitLocation, vector Mo
 	}
 	else if(bNoKnockback)
 	{
-		U.AddHealth(HP, -float(Damage), bNoKnockback);
 		ShrekController(PC).UpdateHealthManagerStatus();
 		
 		if(Rand(2) == 0)
@@ -2603,6 +2604,11 @@ function HitSomebody(int hitdamage, array<Sound> SoundArray, name animseq, float
 	local int newdamage;
 
 	newdamage = hitdamage;
+	
+	if(SHWeap != none)
+	{
+		newdamage *= fWeaponDamageScale;
+	}
 	
 	if(bHasStrengthPotion)
 	{
@@ -3422,7 +3428,7 @@ function HeroOutOfWater()
 	ChangeAnimation();
 }
 
-function Bump(Actor Other)
+event Bump(Actor Other)
 {
 	local vector V;
 	
@@ -4926,7 +4932,7 @@ state stateStartAirAttack
 		
 		CheckForButton(Other);
 	}
-
+	
 	function DoDoubleJump(bool bUpdating)
 	{
 		return;
@@ -5026,6 +5032,13 @@ state stateRunAttack
 			RunAttackEmitter = Spawn(RunAttackEmitterName);
 			RunAttackEmitter.SetLocation(GetRunAttackEmitterLocation());
 		}
+		
+		if(bCanSpeedCharge)
+		{
+			GroundSpeed = GroundSpeed * fSpeedChargeMultiplier;
+			GroundRunSpeed = GroundSpeed;
+			SetPropertyText("BaseMovementRate", string(GroundSpeed / fSpeedChargeMultiplier));
+		}
 	}
 	
 	function SetWalking(bool bNewIsWalking)
@@ -5062,6 +5075,22 @@ state stateRunAttack
 			RunAttackEmitter.Kill();
 			RunAttackEmitter = none;
 		}
+		
+		if(bCanSpeedCharge)
+		{
+			if(bInWater || bInQuicksand)
+			{
+				GroundSpeed = default.WaterGroundSpeed;
+				GroundRunSpeed = default.GroundRunSpeed;
+				SetPropertyText("BaseMovementRate", string(default.WaterGroundSpeed));
+			}
+			else
+			{
+				GroundSpeed = default.GroundRunSpeed;
+				GroundRunSpeed = default.GroundRunSpeed;
+				SetPropertyText("BaseMovementRate", string(_BaseMovementRate));
+			}
+		}
 	}
 
 	event Tick(float DeltaTime)
@@ -5092,6 +5121,18 @@ state stateRunAttack
 			RunAttackEmitter.SetLocation(GetRunAttackEmitterLocation());
 		}
 	}
+	
+	event Landed(vector N)
+	{
+		super.Landed(N);
+		
+		if(bCanSpeedCharge && !(bInWater || bInQuicksand))
+		{
+			GroundSpeed = default.GroundSpeed * fSpeedChargeMultiplier;
+			GroundRunSpeed = GroundSpeed;
+			SetPropertyText("BaseMovementRate", string(GroundSpeed / fSpeedChargeMultiplier));
+		}
+	}
 
 	function AnimEnd(int Channel)
 	{
@@ -5105,17 +5146,14 @@ state stateRunAttack
 			{
 				GotoState('StateIdle');
 			}
+			else if(bPressDuringRunAttack && MovingForward())
+			{
+				StartRegularAttack();
+				PlayArraySound(RunAttackSounds, 1.0);
+			}
 			else
 			{
-				if(bPressDuringRunAttack && MovingForward())
-				{
-					StartRegularAttack();
-					PlayArraySound(RunAttackSounds, 1.0);
-				}
-				else
-				{
-					GotoState('StateIdle');
-				}
+				GotoState('StateIdle');
 			}
 			
 			bPressDuringRunAttack = false;
@@ -5973,6 +6011,8 @@ state stateHeroDying
 
 defaultproperties
 {
+	LODBias=10.0
+	LODBiasSW=10.0
 	bCanMount=true
 	bLandSlowdown=true
 	iAirJumpCount=1
@@ -5997,12 +6037,15 @@ defaultproperties
 	iSpecialAttackDamage=9
 	fDelayAfterDeathBeforeReload=1.0
 	bAllowJumpAttackPrebuffering=true
+	bCanSpeedCharge=true
+	fSpeedChargeMultiplier=1.25
+	fWeaponDamageScale=2.0
 	FootPrintDecal=class'SHGame.FootPrintProjector'
 	maxTimePoisoned=5.0
 	poisonDamageAmount=1.0
 	bSayCombatDialog=true
 	fxSwingingDeathClass=class'SHGame.Cherry_Trail'
-	MaxCombatants=2
+	MaxCombatants=256
 	JumpWaterAnim=minijump
 	IdleFightAnimName=fightidle
 	KnockBackStartAnimName=knockbackstart
@@ -6332,8 +6375,6 @@ defaultproperties
 	bReplicateMovement=true
 	Role=ROLE_Authority
 	NetUpdateFrequency=100.0
-	LODBias=1.0
-	LODBiasSW=1.0
 	DrawScale=1.0
 	DrawScale3D=(X=1.0,Y=1.0,Z=1.0)
 	MaxLights=4

@@ -3287,7 +3287,7 @@ function float CalculateVerticalFOV(float fHorizontalFOV)
 	return 2.0 * ATan(Tan(fHorizontalFOV * PI / 360.0) / fAspectRatio, 1.0) * 180.0 / PI;
 }
 
-function RemoveText(out string Source, string TextToRemove)
+static function RemoveText(out string Source, string TextToRemove)
 {
     local int StartIndex;
 	
@@ -3314,6 +3314,11 @@ function LipSyncDialog(KWPawn LipSyncOwner, Sound DialogSound, string sDialogLin
 	LSD.LSData.DialogSound = DialogSound;
 	LSD.LSData.sDialogLine = sDialogLine;
 	LSD.Trigger(self, none);
+}
+
+function bool IsShrek22()
+{
+	return Level.Game.IsA('SH22Game');
 }
 
 

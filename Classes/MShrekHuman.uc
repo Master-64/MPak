@@ -26,7 +26,7 @@ var() Material SwordSkin, PowerfulSwordSkin;
 var StaticMesh OriginalSwordStaticMesh, PowerfulSwordStaticMesh;
 
 
-function PostBeginPlay()
+event PostBeginPlay()
 {
 	super.PostBeginPlay();
 	
@@ -36,7 +36,15 @@ function PostBeginPlay()
 	SHWeap = Sword;
 }
 
-function AddAnimNotifys()
+event Destroyed()
+{
+	if(Sword != none)
+	{
+		Sword.Destroy();
+	}
+}
+
+event AddAnimNotifys()
 {
 	local MeshAnimation MeshAnim;
 
@@ -533,6 +541,12 @@ state stateQuickThrowEnd
 
 defaultproperties
 {
+	fSpeedChargeMultiplier=1.3
+	fDamageMultiplier=1.5
+	fWeaponDamageScale=3.0
+	fJumpDist=211.2
+	fJumpHeight=70.4
+	fDoubleJumpHeight=105.6
 	QuickThrowStartAnimName=quickthrowstart
 	QuickThrowLoopAnimName=quickthrowloop
 	QuickThrowEndAnimName=QuickThrowIdle

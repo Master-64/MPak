@@ -43,7 +43,7 @@ function PlayFartSound()
 	PlayOwnedSound(snd, SLOT_None, 1.0, true, 800.0, RandRange(0.9, 1.1));
 }
 
-function PostBeginPlay()
+event PostBeginPlay()
 {
 	super.PostBeginPlay();
 	
@@ -63,6 +63,24 @@ function PostBeginPlay()
 	BottleHEA.SetOwner(self);
 	BottleHEA.bHidden = !bShowBottle;
 	BottleHEA.bCanBePickedUp = false;
+}
+
+event Destroyed()
+{
+	if(LeftGlove != none)
+	{
+		LeftGlove.Destroy();
+	}
+	
+	if(RightGlove != none)
+	{
+		RightGlove.Destroy();
+	}
+	
+	if(BottleHEA != none)
+	{
+		BottleHEA.Destroy();
+	}
 }
 
 event Tick(float DeltaTime)
@@ -121,7 +139,7 @@ event PostLoadGame(bool bLoadFromSaveGame)
 	HP.Tag = 'MainPlayer';
 }
 
-function AddAnimNotifys()
+event AddAnimNotifys()
 {
 	local MeshAnimation MeshAnim;
 
@@ -143,9 +161,8 @@ function AddAnimNotifys()
 	AddNotify(MeshAnim, StartSpecialAttackAnim, 53.0, 'SpecialAttackCameraShake');
 	AddNotify(MeshAnim, BossPibAttackAnim, 22.0, 'BossPibAttackCameraShake');
 	AddNotify(MeshAnim, StartAttackAnim3, 19.0, 'HitGround');
-	AddNotify(MeshAnim, ContinueAirAttackAnim, 2.0, 'PlaySoundBellyFlop2');
-	AddNotify(MeshAnim, EndAirAttackAnim, 3.0, 'PlaySoundBellyFlop2');
-	AddNotify(MeshAnim, StartAttackAnim3, 28.0, 'PlaySoundBellyFlop1');
+	AddNotify(MeshAnim, ContinueAirAttackAnim, 2.0, 'PlaySoundBellyFlop');
+	AddNotify(MeshAnim, EndAirAttackAnim, 3.0, 'PlaySoundBellyFlop');
 	AddNotify(MeshAnim, NewRunAttackAnim, 1.0, 'CreateRibbonEmittersForRunAttack');
 	AddNotify(MeshAnim, NewRunAttackAnim, 11.0, 'DestroyRibbonEmitters');
 	AddNotify(MeshAnim, ThrowPotionAnimName, 18.0, 'ThrowPotion');
@@ -169,6 +186,18 @@ function bool HitBossPib()
 	return true;
 }
 
+function PlaySoundBellyFlop()
+{
+	if(Base == none)
+	{
+		PlaySoundBellyFlop1();
+	}
+	else
+	{
+		PlaySoundBellyFlop2();
+	}
+}
+
 function PlaySoundBellyFlop1()
 {
 	PlayOwnedSound(SoundBellyFlop1, SLOT_None, 1.0, true, 1000.0, RandRange(0.9, 1.1));
@@ -176,12 +205,31 @@ function PlaySoundBellyFlop1()
 
 function PlaySoundBellyFlop2()
 {
+	local vector HitLoc, HitNorm;
+	local KWGame.EMaterialType mtype;
 	local Actor HitActor;
 	local vector HitLocation, HitNormal;
 
 	HitActor = Trace(HitLocation, HitNormal, Location - U.Vec(0.0, 0.0, 500.0), Location, true, U.Vec(1.0, 1.0, 1.0));
 	Spawn(BellyFlopEmitterName,,, HitLocation);
 	PlayOwnedSound(SoundBellyFlop2, SLOT_None, 1.0, true, 1000.0, RandRange(0.9, 1.1));
+	
+	mtype = TraceMaterial(Location, 1.5 * CollisionHeight, HitLoc, HitNorm);
+	
+	if(mtype != MTYPE_Wet)
+	{
+		PlayOwnedSound(EarthQuakeSound, SLOT_None, 1.0, true, 1000.0, RandRange(0.9, 1.1));
+		Spawn(SpecialAttackEmitterName,,, HitLoc);
+	}
+	else
+	{
+		PlayOwnedSound(InWaterSound, SLOT_None, 1.0, true, 1000.0, RandRange(0.9, 1.1));
+		Spawn(WetLandedFX,,, HitLoc);
+	}
+	
+	KWHeroController(Controller).SimpleShakeView(0.2, 150.0, 0.75);
+	KillAllEnemiesAround(125.0);
+	GoToStateKnock(Rand(2) == 0);
 }
 
 function SpecialAttackCameraShake()
@@ -217,7 +265,8 @@ function HitGround()
 		Spawn(WetLandedFX,,, HitLoc);
 	}
 	
-	KillAllEnemiesAround(150.0);
+	KWHeroController(Controller).SimpleShakeView(0.2, 150.0, 0.75);
+	KillAllEnemiesAround(175.0);
 }
 
 function BossPibAttackCameraShake()
@@ -393,6 +442,18 @@ state StateCarryItem
 
 defaultproperties
 {
+	fSpeedChargeMultiplier=1.64
+	GroundSpeed=450.0
+	GroundRunSpeed=450.0
+	GroundCarrySpeed=350.0
+	iFirstAttackDamage=2
+	iSecondAttackDamage=3
+	iThirdAttackDamage=4
+	iThirdAttackSplashDamage=7
+	iRunAttackDamage=3
+	iSpecialAttackDamage=14
+	fThrowVelocity=600.0
+	fDamageMultiplier=0.8
 	BottleAttachOffset=(X=-9,Y=5,Z=-6)
 	BottleAttachRotation=(Roll=14999)
 	FartSounds(0)=Sound'Shrek.fart01'

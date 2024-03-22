@@ -75,7 +75,7 @@ function CreateSpecialRibbonEmitters()
 	}
 }
 
-function PostBeginPlay()
+event PostBeginPlay()
 {
 	super.PostBeginPlay();
 	
@@ -98,7 +98,20 @@ function PostBeginPlay()
 	}
 }
 
-function AddAnimNotifys()
+event Destroyed()
+{
+	if(DHelmet != none)
+	{
+		DHelmet.Destroy();
+	}
+	
+	if(BottleHEA != none)
+	{
+		BottleHEA.Destroy();
+	}
+}
+
+event AddAnimNotifys()
 {
 	local MeshAnimation MeshAnim;
 
@@ -415,6 +428,16 @@ state stateEndCheerInBossPibBattle
 
 defaultproperties
 {
+	fSpeedChargeMultiplier=1.35
+	GroundSpeed=600.0
+	GroundRunSpeed=600.0
+	GroundCarrySpeed=500.0
+	bCanAirJump=true
+	iDoubleJumpCount=0
+	iAirJumpCount=1
+	fJumpDist=384.0
+	AirControl=0.375
+	bCanMount=false
 	BracesSkins(0)=Texture'ShCharacters.donkey2_tx'
 	BracesSkins(1)=Texture'ShCharacters.donkey_braces_tx'
 	BottleAttachRotation=(Roll=-19000)

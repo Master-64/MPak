@@ -18,6 +18,7 @@ var() array<Sound> Throw2Sounds, KickSounds, FakeKickSounds;
 var GenericColObj LeftFistColObj, RightFistColObj;
 var name LeftFistBone, RightFistBone, KickAnimName;
 var() bool bShowShrek;
+var() int iKickAttackDamage;
 var bool L, R, bOldbShowShrek;
 
 function AttachGenericColObjs()
@@ -66,7 +67,7 @@ function AttachCitizenCollision()
 	}
 }
 
-function PostBeginPlay()
+event PostBeginPlay()
 {
 	super.PostBeginPlay();
 	
@@ -83,7 +84,7 @@ function PostBeginPlay()
 	}
 }
 
-function AddAnimNotifys()
+event AddAnimNotifys()
 {
 	local MeshAnimation MeshAnim;
 
@@ -390,7 +391,20 @@ state stateKickAttack
 
 defaultproperties
 {
+	GroundSpeed=600.0
+	GroundRunSpeed=600.0
+	GroundCarrySpeed=500.0
+	AccelRate=1536
+	fDamageMultiplier=0.5
+	iFirstAttackDamage=64
+	iSecondAttackDamage=96
+	iThirdAttackDamage=128
+	iThirdAttackSplashDamage=256
+	iRunAttackDamage=128
+	iSpecialAttackDamage=1024
+	iKickAttackDamage=128
 	bCanMount=false
+	NewTag=Mongo
 	ShrekSkin=Texture'ShCharacters.minus_handsome_tx'
 	CrumpBones(0)=body_l_thigh_joint
 	CrumpBones(1)=body_r_thigh_joint

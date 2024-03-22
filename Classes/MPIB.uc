@@ -30,7 +30,7 @@ var PibRightGlove RightGlove;
 var PibNecklace Necklace;
 
 
-function PostBeginPlay()
+event PostBeginPlay()
 {
 	super.PostBeginPlay();
 	
@@ -55,7 +55,30 @@ function PostBeginPlay()
 	Necklace.bHidden = !bShowNecklace;
 }
 
-function AddAnimNotifys()
+event Destroyed()
+{
+	if(PibSword != none)
+	{
+		PibSword.Destroy();
+	}
+	
+	if(LeftGlove != none)
+	{
+		LeftGlove.Destroy();
+	}
+	
+	if(RightGlove != none)
+	{
+		RightGlove.Destroy();
+	}
+	
+	if(Necklace != none)
+	{
+		Necklace.Destroy();
+	}
+}
+
+event AddAnimNotifys()
 {
 	local MeshAnimation MeshAnim;
 	
@@ -515,6 +538,46 @@ event bool Mount(vector Delta, Actor A)
 	return bReturn;
 }
 
+function HitSHPawn(Actor HitActor, int hitdamage, array<Sound> SoundArray, class<DamageType> DamageType)
+{
+	if(HitActor.IsA('SHEnemy'))
+	{
+		if(IsBehindEnemy(SHEnemy(HitActor)))
+		{
+			hitdamage *= 4;
+		}
+	}
+	
+	super.HitSHPawn(HitActor, hitdamage, SoundArray, DamageType);
+}
+
+function bool IsBehindEnemy(SHEnemy Enemy)
+{
+	local vector dir1, dir2;
+	local rotator rot1, rot2;
+	local float cosYaw, cosAngle;
+	
+	rot1 = Rotation;
+	rot2 = Enemy.Rotation;
+	dir1 = vector(rot1);
+	dir2 = vector(rot2);
+	cosYaw = dir1 Dot dir2;
+	cosYaw *= -1.0;
+	cosAngle = Cos((Enemy.AttackAngle * PI) / 180.0);
+	
+	return cosYaw < cosAngle;
+}
+
+event Falling()
+{
+	super.Falling();
+	
+	if(IsInState('stateRunAttack') && PibSword.bIsOut)
+	{
+		AnimNotifySwordIsIn();
+	}
+}
+
 state stateHeldByTheScruffIdle
 {
 	function name GetIdleAnimName()
@@ -650,6 +713,11 @@ state LadderClimbFinish
 
 defaultproperties
 {
+	fFatalFallDamageMultiplier=0.1
+	fDamageMultiplier=2.0
+	AirControl=0.5
+	fJumpDist=384.0
+	NewTag=PIB
 	NecklaceAttachBone=body_spine4_joint
 	NecklaceAttachRotation=(Pitch=-16235)
 	HairFlyEmitter=class'SHGame.Hair_Fly'
