@@ -428,7 +428,7 @@ state stateEndCheerInBossPibBattle
 
 defaultproperties
 {
-	fSpeedChargeMultiplier=1.35
+	fSpeedChargeMultiplier=1.25
 	GroundSpeed=600.0
 	GroundRunSpeed=600.0
 	GroundCarrySpeed=500.0

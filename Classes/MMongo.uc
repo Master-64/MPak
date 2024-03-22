@@ -394,7 +394,8 @@ defaultproperties
 	GroundSpeed=600.0
 	GroundRunSpeed=600.0
 	GroundCarrySpeed=500.0
-	AccelRate=1536
+	AccelRate=1350.0
+	_AccelRate=1350.0
 	fDamageMultiplier=0.5
 	iFirstAttackDamage=64
 	iSecondAttackDamage=96

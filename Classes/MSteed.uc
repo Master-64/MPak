@@ -99,10 +99,10 @@ function HideStrengthAttributes()
 
 defaultproperties
 {
-	fSpeedChargeMultiplier=1.4
-	GroundSpeed=750.0
-	GroundRunSpeed=750.0
-	GroundCarrySpeed=650.0
+	fSpeedChargeMultiplier=1.3
+	GroundSpeed=650.0
+	GroundRunSpeed=650.0
+	GroundCarrySpeed=550.0
 	iSecondAttackDamage=6
 	iThirdAttackDamage=2
 	bCanAirJump=true
@@ -110,7 +110,8 @@ defaultproperties
 	iAirJumpCount=2
 	fDoubleJumpHeight=128.0
 	fJumpDist=261.82
-	AccelRate=1024
+	AccelRate=1024.0
+	_AccelRate=1024.0
 	bCanMount=false
 	SteedFaintSound=Sound'Steed.faint'
 	SteedFaintDropSound=Sound'Steed.faint_drop'

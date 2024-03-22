@@ -18,7 +18,7 @@ var int iDoubleJumpCounter, iAirJumpCounter;
 var(Animation) name _MovementAnims[4];
 var(AnimTweaks) float _BaseMovementRate;
 var name nOldState;
-var float MJumpZ, fTimeSinceLastTiredDialog;
+var float MJumpZ, fTimeSinceLastTiredDialog, _AccelRate;
 var class<AIController> AIC;
 var KWHeroController PC;
 var Pawn HP, ICP;
@@ -5035,6 +5035,7 @@ state stateRunAttack
 		
 		if(bCanSpeedCharge)
 		{
+			SetPropertyText("AccelRate", string(_AccelRate / 2.0));
 			GroundSpeed = GroundSpeed * fSpeedChargeMultiplier;
 			GroundRunSpeed = GroundSpeed;
 			SetPropertyText("BaseMovementRate", string(GroundSpeed / fSpeedChargeMultiplier));
@@ -5090,6 +5091,8 @@ state stateRunAttack
 				GroundRunSpeed = default.GroundRunSpeed;
 				SetPropertyText("BaseMovementRate", string(_BaseMovementRate));
 			}
+			
+			SetPropertyText("AccelRate", string(_AccelRate));
 		}
 	}
 
@@ -5131,6 +5134,7 @@ state stateRunAttack
 			GroundSpeed = default.GroundSpeed * fSpeedChargeMultiplier;
 			GroundRunSpeed = GroundSpeed;
 			SetPropertyText("BaseMovementRate", string(GroundSpeed / fSpeedChargeMultiplier));
+			SetPropertyText("AccelRate", string(_AccelRate));
 		}
 	}
 
@@ -6178,7 +6182,8 @@ defaultproperties
 	WetLandedFX=class'splash'
 	GroundSpeed=550.0
 	AirSpeed=1000.0
-	AccelRate=1548
+	AccelRate=1548.0
+	_AccelRate=1548.0
 	JumpZ=520.0
 	AirControl=0.25
 	ControllerClass=class'Sh_NPCController'
