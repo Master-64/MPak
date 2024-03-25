@@ -84,8 +84,8 @@ event PlayerController Login(string Portal, string Options, out string Error)
 
 defaultproperties
 {
-	HUDType="SHGame.ShHud"
-    GameName="Master Pack Game"
+	HUDType="SHGame.SHHud"
+	GameName="Master Pack Game"
 	DefaultPlayerClassName="SHGame.Shrek"
 	PlayerControllerClassName="SHGame.ShrekController"
 	bAllowBehindView=true

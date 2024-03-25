@@ -68,6 +68,10 @@ event PreBeginPlay()
 	{
 		MenuName = GetItemName(string(Class));
 	}
+	
+	_BaseMovementRate = default.GroundRunSpeed * (450.0 / 550.0);
+	SetPropertyText("BaseMovementRate", string(_BaseMovementRate));
+	default.GroundSpeed = GroundRunSpeed;
 }
 
 event PostBeginPlay()
@@ -6180,7 +6184,6 @@ defaultproperties
 	NeckBone=body_neck_joint
 	LandedFX=class'Grnd_Impact'
 	WetLandedFX=class'splash'
-	GroundSpeed=550.0
 	AirSpeed=1000.0
 	AccelRate=1548.0
 	_AccelRate=1548.0

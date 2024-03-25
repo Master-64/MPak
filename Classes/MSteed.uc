@@ -100,7 +100,6 @@ function HideStrengthAttributes()
 defaultproperties
 {
 	fSpeedChargeMultiplier=1.3
-	GroundSpeed=650.0
 	GroundRunSpeed=650.0
 	GroundCarrySpeed=550.0
 	iSecondAttackDamage=6

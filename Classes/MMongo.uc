@@ -391,7 +391,6 @@ state stateKickAttack
 
 defaultproperties
 {
-	GroundSpeed=600.0
 	GroundRunSpeed=600.0
 	GroundCarrySpeed=500.0
 	AccelRate=1350.0

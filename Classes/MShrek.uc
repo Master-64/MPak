@@ -443,7 +443,6 @@ state StateCarryItem
 defaultproperties
 {
 	fSpeedChargeMultiplier=1.64
-	GroundSpeed=450.0
 	GroundRunSpeed=450.0
 	GroundCarrySpeed=350.0
 	iFirstAttackDamage=2
