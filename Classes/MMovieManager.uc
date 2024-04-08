@@ -38,6 +38,8 @@ function BeginNextMovie() // Begins playing the upcoming movie(s)
 	local vector vRes;
 	local string sResVars;
 	
+	GotoState('');
+	
 	PC = U.GetPC();
 	HUD = U.GetHUD();
 	HUD.bHideHUD = true;
@@ -104,12 +106,10 @@ state PlayMovie // Constantly checks whether a movie has stopped playing and res
 {
 	event Tick(float DeltaTime)
 	{
-		fMovieTime += DeltaTime;
-		
 		if(!U.IsMoviePlaying())
 		{
 			// If this is true then it is very likely the movie failed to be located and played
-			if(fMovieTime <= 0.5)
+			if(fMovieTime <= 0.0)
 			{
 				bFallback = true;
 				
@@ -120,6 +120,8 @@ state PlayMovie // Constantly checks whether a movie has stopped playing and res
 				return;
 			}
 			
+			fMovieTime = 0.0;
+			
 			if(!bPickRandom)
 			{
 				iCurrentMovieIndex++;
@@ -129,12 +131,12 @@ state PlayMovie // Constantly checks whether a movie has stopped playing and res
 			else
 			{
 				StopPlayingMovies();
-				
-				GotoState('');
 			}
 			
-			fMovieTime = 0.0;
+			return;
 		}
+		
+		fMovieTime += DeltaTime;
 	}
 }
 
