@@ -100,7 +100,7 @@ event AnimNotifySwordIsIn()
 	Sword.bIsOut = false;
 }
 
-function Tick(float DeltaTime)
+event Tick(float DeltaTime)
 {
 	local name animseq;
 	

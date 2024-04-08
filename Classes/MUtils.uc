@@ -669,6 +669,8 @@ function GivePawnController(KWPawn P)
 	{
 		P.SetPropertyText("bIsMainPlayer", "False");
 	}
+	
+	P.PostPersistentDataRestored();
 }
 
 function float GetDefaultJumpValue(SHHeroPawn SHHP, bool bGetDoubleJumpZ, optional bool bAccountForCurrentGravity)
@@ -1786,9 +1788,14 @@ static function int Ceiling(float fValue)
 	return Result;
 }
 
-static function int Round(float fValue)
+static function float Round(float fValue, optional float Step)
 {
-    return Floor(fValue + 0.5);
+	if(Step <= 0.0)
+	{
+		Step = 1.0;
+	}
+	
+	return Floor((fValue + (Step * 0.5)) / Step) * Step;
 }
 
 static function int Truncate(float fValue)
@@ -3321,6 +3328,72 @@ function bool IsShrek22()
 	return Level.Game.IsA('SH22Game');
 }
 
+static function bool IsActorBehindActor(Actor A1, Actor A2, optional float fAttackAngle)
+{
+	local vector dir1, dir2;
+	local rotator rot1, rot2;
+	local float cosYaw, cosAngle;
+	
+	if(A1 == none || A2 == none)
+	{
+		return false;
+	}
+	
+	if(fAttackAngle <= 0.0)
+	{
+		// 60.0 unless overwrote
+		fAttackAngle = class'SHEnemy'.default.AttackAngle;
+	}
+	
+	rot1 = A1.Rotation;
+	rot2 = A2.Rotation;
+	dir1 = vector(rot1);
+	dir2 = vector(rot2);
+	cosYaw = dir1 Dot dir2;
+	cosYaw *= -1.0;
+	cosAngle = Cos((fAttackAngle * PI) / 180.0);
+	
+	return cosYaw < cosAngle;
+}
+
+static function int Fact(int iValue)
+{
+	local int i, iReturn;
+	
+	// 13! is above the 32-bit integer limit so we'll clamp it below that
+	iValue = Clamp(iValue, 1, 12);
+	iReturn = 1;
+	
+	for(i = iValue; i > 0; i--)
+	{
+		iReturn *= i;
+	}
+	
+	return iReturn;
+}
+
+static function Color RandColor(byte Min, byte Max, optional byte Alpha, optional bool bRandomAlpha)
+{
+	local byte Bs[4];
+	local int i;
+	
+	for(i = 0; i < 3; i++)
+	{
+		Bs[i] = RandRangeInt(Min, Max);
+	}
+	
+	if(!bRandomAlpha)
+	{
+		Bs[3] = Alpha;
+	}
+	else
+	{
+		Bs[3] = RandRangeInt(Min, Max);
+	}
+	
+	return MakeColor(Bs[0], Bs[1], Bs[2], Bs[3]);
+}
+
 
 // KnowWonder Functions
 
@@ -3329,7 +3402,7 @@ function array<string> Split(string Source, optional string Delimiter)
 	return KWGame(Level.Game).Split(Source, Delimiter);
 }
 
-static function vector Vec(float X, float Y, float Z)
+static function vector Vec(float X, float Y, float Z) // Static functions must be rewrote to prevent a crash
 {
 	local vector V;
 	

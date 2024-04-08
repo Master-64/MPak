@@ -2301,8 +2301,6 @@ function TakeDamage(int Damage, Pawn instigatedBy, vector HitLocation, vector Mo
 		ShrekController(PC).UpdateHealthManagerStatus();
 	}
 	
-	forward = false;
-	
 	if(DamageType == class'ForwardAttackDamage')
 	{
 		forward = true;
@@ -2345,7 +2343,7 @@ function TakeDamage(int Damage, Pawn instigatedBy, vector HitLocation, vector Mo
 			SayHurtBumpLine();
 		}
 	}
-	else
+	else if(U.GetHealth(self) > 0.0)
 	{
 		GoToStateKnock(forward);
 	}
@@ -5026,6 +5024,14 @@ state stateRunAttack
 		LoopAnim(MAs[2], 1.0, 0.0, 6);
 		LoopAnim(MAs[3], 1.0, 0.0, 7);
 		
+		if(bCanSpeedCharge)
+		{
+			SetPropertyText("AccelRate", string(_AccelRate / 2.0));
+			GroundSpeed = GroundSpeed * fSpeedChargeMultiplier;
+			GroundRunSpeed = GroundSpeed;
+			SetPropertyText("BaseMovementRate", string(GroundSpeed / fSpeedChargeMultiplier));
+		}
+		
 		if(RunAttackEmitter == none)
 		{
 			if(U.IsSoftwareRendering() || Level.DetailMode == DM_Low)
@@ -5035,14 +5041,6 @@ state stateRunAttack
 			
 			RunAttackEmitter = Spawn(RunAttackEmitterName);
 			RunAttackEmitter.SetLocation(GetRunAttackEmitterLocation());
-		}
-		
-		if(bCanSpeedCharge)
-		{
-			SetPropertyText("AccelRate", string(_AccelRate / 2.0));
-			GroundSpeed = GroundSpeed * fSpeedChargeMultiplier;
-			GroundRunSpeed = GroundSpeed;
-			SetPropertyText("BaseMovementRate", string(GroundSpeed / fSpeedChargeMultiplier));
 		}
 	}
 	

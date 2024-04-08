@@ -15,7 +15,7 @@ var(GameState) const editconst string GameStateMasterList;
 var(GameState) travel string CurrentGameState;
 
 
-function PostBeginPlay()
+event PostBeginPlay()
 {
 	local MeshAnimation MeshAnim;
 	

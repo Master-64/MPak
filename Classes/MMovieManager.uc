@@ -17,7 +17,8 @@ var() bool bStopMusicDuringMovies, bPickRandom, bKeepHUDHiddenAfterMovies;
 var() float fMusicFadeTime;
 var int iCurrentMovieIndex;
 var string sOldMusic;
-var bool bCanBeTriggered;
+var bool bCanBeTriggered, bFallback;
+var float fMovieTime;
 
 
 function Trigger(Actor Other, Pawn EventInstigator)
@@ -32,7 +33,7 @@ function Trigger(Actor Other, Pawn EventInstigator)
 	BeginNextMovie();
 }
 
-function BeginNextMovie()
+function BeginNextMovie() // Begins playing the upcoming movie(s)
 {
 	local vector vRes;
 	local string sResVars;
@@ -53,7 +54,7 @@ function BeginNextMovie()
 		iCurrentMovieIndex = Rand(MovieList.Length);
 	}
 	
-	if(iCurrentMovieIndex > MovieList.Length)
+	if(iCurrentMovieIndex > MovieList.Length - 1)
 	{
 		StopPlayingMovies();
 		
@@ -62,14 +63,16 @@ function BeginNextMovie()
 	
 	vRes = U.GetResolution();
 	
-	sResVars = "$" $ U.FloatToString(vRes.X) $ "x" $ U.FloatToString(vRes.Y);
-	
-	if(vFallbackResolution != default.vFallbackResolution)
+	if(!bFallback)
 	{
-		if(!U.DoesFileExist("..\\Movies\\" $ MovieList[iCurrentMovieIndex] $ sResVars))
-		{
-			sResVars = "$" $ U.FloatToString(vFallbackResolution.X) $ "x" $ U.FloatToString(vFallbackResolution.Y);
-		}
+		sResVars = "$" $ U.FloatToString(vRes.X) $ "x" $ U.FloatToString(vRes.Y);
+	}
+	else
+	{
+		// If this fallback doesn't work, a non-critical infinite loop will occur
+		sResVars = "$" $ U.FloatToString(vFallbackResolution.X) $ "x" $ U.FloatToString(vFallbackResolution.Y);
+		
+		bFallback = false;
 	}
 	
 	U.PlayMovie(MovieList[iCurrentMovieIndex] $ sResVars, true);
@@ -77,7 +80,7 @@ function BeginNextMovie()
 	GotoState('PlayMovie');
 }
 
-function StopPlayingMovies()
+function StopPlayingMovies() // Stops playing movie(s)
 {
 	HUD = U.GetHUD();
 	HUD.bHideHUD = bKeepHUDHiddenAfterMovies;
@@ -97,12 +100,26 @@ function StopPlayingMovies()
 	bCanBeTriggered = true;
 }
 
-state PlayMovie
+state PlayMovie // Constantly checks whether a movie has stopped playing and responds accordingly
 {
 	event Tick(float DeltaTime)
 	{
+		fMovieTime += DeltaTime;
+		
 		if(!U.IsMoviePlaying())
 		{
+			// If this is true then it is very likely the movie failed to be located and played
+			if(fMovieTime <= 0.5)
+			{
+				bFallback = true;
+				
+				fMovieTime = 0.0;
+				
+				BeginNextMovie();
+				
+				return;
+			}
+			
 			if(!bPickRandom)
 			{
 				iCurrentMovieIndex++;
@@ -115,6 +132,8 @@ state PlayMovie
 				
 				GotoState('');
 			}
+			
+			fMovieTime = 0.0;
 		}
 	}
 }
@@ -122,6 +141,7 @@ state PlayMovie
 
 defaultproperties
 {
+	vFallbackResolution=(X=640.0,Y=480.0)
 	bCanBeTriggered=true
 	fMusicFadeTime=1.0
 	Tag=MMovieManager

@@ -421,7 +421,7 @@ function StartToShrinkUp()
 	AmbientGlow = bOldAmbientGlow;
 }
 
-function Tick(float DeltaTime)
+event Tick(float DeltaTime)
 {
 	local name animseq;
 	local PibCrouchVolume pcv;
@@ -542,30 +542,13 @@ function HitSHPawn(Actor HitActor, int hitdamage, array<Sound> SoundArray, class
 {
 	if(HitActor.IsA('SHEnemy'))
 	{
-		if(IsBehindEnemy(SHEnemy(HitActor)))
+		if(U.IsActorBehindActor(self, HitActor))
 		{
 			hitdamage *= 4;
 		}
 	}
 	
 	super.HitSHPawn(HitActor, hitdamage, SoundArray, DamageType);
-}
-
-function bool IsBehindEnemy(SHEnemy Enemy)
-{
-	local vector dir1, dir2;
-	local rotator rot1, rot2;
-	local float cosYaw, cosAngle;
-	
-	rot1 = Rotation;
-	rot2 = Enemy.Rotation;
-	dir1 = vector(rot1);
-	dir2 = vector(rot2);
-	cosYaw = dir1 Dot dir2;
-	cosYaw *= -1.0;
-	cosAngle = Cos((Enemy.AttackAngle * PI) / 180.0);
-	
-	return cosYaw < cosAngle;
 }
 
 event Falling()

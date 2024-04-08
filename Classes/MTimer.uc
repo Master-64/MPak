@@ -20,7 +20,7 @@ var() bool bUnlimitedTimer;
 
 auto state StartTimer
 {
-	function Tick(float DeltaTime)
+	event Tick(float DeltaTime)
 	{
 		fTimeElapsed += DeltaTime;
 		

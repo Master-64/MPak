@@ -190,7 +190,7 @@ exec function MSetCameraDist(string S)
 	
 	if(TokenArray.Length < 1)
 	{
-		Outer.Warn("Master Controller (SetCameraDist) -- Missing arguments; aborting process");
+		Outer.Warn("Master Cheat Manager (MSetCameraDist) -- Missing arguments; aborting process");
 		
 		return;
 	}
@@ -263,6 +263,7 @@ exec function MWalk()
 	Outer.Pawn.bCollideWorld = true;
 	Outer.Pawn.bCanDoubleJump = Outer.Pawn.default.bCanDoubleJump;
 	Outer.ClientReStart();
+	Outer.Pawn.Landed(Outer.Pawn.Location);
 }
 
 exec function MGod(bool bGod)
@@ -295,34 +296,20 @@ exec function SloMoSave(float F)
 
 exec function SetPotions(int I)
 {
-	Outer.ICP = Outer.U.GetICP();
-	
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion1Collection', -KWPawn(Outer.ICP).GetInventoryCount('Potion1sh'));
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion1Collection', I);
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion2Collection', -KWPawn(Outer.ICP).GetInventoryCount('Potion2sh'));
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion2Collection', I);
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion3Collection', -KWPawn(Outer.ICP).GetInventoryCount('Potion3sh'));
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion3Collection', I);
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion4Collection', -KWPawn(Outer.ICP).GetInventoryCount('Potion4sh'));
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion4Collection', I);
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion5Collection', -KWPawn(Outer.ICP).GetInventoryCount('Potion5sh'));
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion5Collection', I);
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion6Collection', -KWPawn(Outer.ICP).GetInventoryCount('Potion6sh'));
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion6Collection', I);
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion7Collection', -KWPawn(Outer.ICP).GetInventoryCount('Potion7sh'));
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion7Collection', I);
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion8Collection', -KWPawn(Outer.ICP).GetInventoryCount('Potion8sh'));
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion8Collection', I);
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion9Collection', -KWPawn(Outer.ICP).GetInventoryCount('Potion9sh'));
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'Potion9Collection', I);
+	Outer.U.SetInventory(class'Potion1Collection', I);
+	Outer.U.SetInventory(class'Potion2Collection', I);
+	Outer.U.SetInventory(class'Potion3Collection', I);
+	Outer.U.SetInventory(class'Potion4Collection', I);
+	Outer.U.SetInventory(class'Potion5Collection', I);
+	Outer.U.SetInventory(class'Potion6Collection', I);
+	Outer.U.SetInventory(class'Potion7Collection', I);
+	Outer.U.SetInventory(class'Potion8Collection', I);
+	Outer.U.SetInventory(class'Potion9Collection', I);
 }
 
 exec function SetCoins(int I)
 {
-	Outer.ICP = Outer.U.GetICP();
-	
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'CoinCollection', -KWPawn(Outer.ICP).GetInventoryCount('Coin'));
-	KWPawn(Outer.ICP).AddToInventoryCollection(class'CoinCollection', I);
+	Outer.U.SetInventory(class'CoinCollection', I);
 }
 
 exec function MSetHealth(float H)
@@ -353,7 +340,7 @@ exec function MSetJumpZ(string S)
 	
 	if(TokenArray.Length < 1)
 	{
-		Outer.Warn("Master Controller (SetJumpZ) -- Missing arguments; aborting process");
+		Outer.Warn("Master Cheat Manager (MSetJumpZ) -- Missing arguments; aborting process");
 		
 		return;
 	}
@@ -860,7 +847,7 @@ exec function SummonCoords(string S)
 	
 	if(TokenArray.Length < 4)
 	{
-		Outer.Warn("Master Controller (SummonCoords) -- Missing arguments; aborting process");
+		Outer.Warn("Master Cheat Manager (SummonCoords) -- Missing arguments; aborting process");
 		
 		return;
 	}
@@ -893,7 +880,7 @@ exec function SetProp(string S, optional bool bSilent)
 	
 	if(TokenArray.Length < 3)
 	{
-		Outer.Warn("Master Controller (SetProp) -- Missing arguments; aborting process");
+		Outer.Warn("Master Cheat Manager (SetProp) -- Missing arguments; aborting process");
 		
 		return;
 	}
@@ -943,7 +930,7 @@ exec function string GetProp(string S, optional bool bSilent)
 	
 	if(TokenArray.Length < 2)
 	{
-		Outer.Warn("Master Controller (GetProp) -- Missing arguments; aborting process");
+		Outer.Warn("Master Cheat Manager (GetProp) -- Missing arguments; aborting process");
 		
 		return "";
 	}
@@ -1024,7 +1011,7 @@ exec function AnnounceColor(string S)
 	
 	if(TokenArray.Length < 3)
 	{
-		Outer.Warn("Master Controller (AnnounceColor) -- Missing arguments; aborting process");
+		Outer.Warn("Master Cheat Manager (AnnounceColor) -- Missing arguments; aborting process");
 		
 		return;
 	}
@@ -1046,7 +1033,7 @@ exec function TP(string S)
 	
 	if(TokenArray.Length < 3)
 	{
-		Outer.Warn("Master Controller (TP) -- Missing arguments; aborting process");
+		Outer.Warn("Master Cheat Manager (TP) -- Missing arguments; aborting process");
 		
 		return;
 	}
@@ -1109,7 +1096,7 @@ exec function WriteStrings(string S)
 	
 	if(TokenArray.Length < 1)
 	{
-		Outer.Warn("Master Controller (WriteStrings) -- Missing arguments; aborting process");
+		Outer.Warn("Master Cheat Manager (WriteStrings) -- Missing arguments; aborting process");
 		
 		return;
 	}
@@ -1168,7 +1155,7 @@ exec function ChangeState(string S)
 	
 	if(TokenArray.Length < 1)
 	{
-		Outer.Warn("Master Controller (ChangeState) -- Missing arguments; aborting process");
+		Outer.Warn("Master Cheat Manager (ChangeState) -- Missing arguments; aborting process");
 		
 		return;
 	}
@@ -1227,21 +1214,21 @@ exec function Execute(string S, optional bool bIsSleeping)
 	{
 		if(TokenArray.Length < 1)
 		{
-			Outer.Warn("Master Controller (Execute) -- Missing arguments; aborting process");
+			Outer.Warn("Master Cheat Manager (Execute) -- Missing arguments; aborting process");
 			
 			return;
 		}
 	}
 	else if(TokenArray.Length < 2)
 	{
-		Outer.Warn("Master Controller (SleepFor) -- Missing arguments; aborting process");
+		Outer.Warn("Master Cheat Manager (SleepFor) -- Missing arguments; aborting process");
 		
 		return;
 	}
 	
 	if(ExecuteLoopCheck(TokenArray))
 	{
-		Outer.Warn("Master Controller (Execute) -- Infinite loop found; aborting process");
+		Outer.Warn("Master Cheat Manager (Execute) -- Infinite loop found; aborting process");
 		
 		return;
 	}
@@ -1357,7 +1344,7 @@ exec function PlayADialog(string S)
 	}
 	else
 	{
-		Outer.Warn("Master Controller (PlayADialog) -- Pawn isn't a KWPawn; aborting process");
+		Outer.Warn("Master Cheat Manager (PlayADialog) -- Pawn isn't a KWPawn; aborting process");
 	}
 }
 
@@ -1401,7 +1388,7 @@ exec function RefreshJumpVars()
 	}
 	else
 	{
-		Outer.Warn("Master Controller (RefreshJumpVars) -- Pawn isn't a KWPawn; aborting process");
+		Outer.Warn("Master Cheat Manager (RefreshJumpVars) -- Pawn isn't a KWPawn; aborting process");
 	}
 }
 

@@ -17,7 +17,7 @@ var() float fSpawnDelay;
 var EnemySpawnDirector ESD;
 
 
-function PostBeginPlay()
+event PostBeginPlay()
 {
 	super.PostBeginPlay();
 	

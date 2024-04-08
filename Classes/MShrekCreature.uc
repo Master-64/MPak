@@ -14,7 +14,7 @@ var() int BlendOutLandingFrame;
 var() float ParentCollisionHeight, fLiveInBFGM;
 
 
-function PostBeginPlay()
+event PostBeginPlay()
 {
 	super.PostBeginPlay();
 }
@@ -77,7 +77,7 @@ function bool MovingForward()
 
 state stateKnockBack
 {
-	function Tick(float DeltaTime)
+	event Tick(float DeltaTime)
 	{
 		global.Tick(DeltaTime);
 		Velocity = U.Vec(0.0, 0.0, 0.0);

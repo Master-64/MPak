@@ -101,7 +101,7 @@ event AddAnimNotifys()
 	AddFootStepsNotify(MeshAnim);
 }
 
-function Tick(float DeltaTime)
+event Tick(float DeltaTime)
 {
 	super.Tick(DeltaTime);
 	

@@ -10,7 +10,7 @@ class MKing extends MHeroPawn
 	Config(MPak);
 
 
-function PostBeginPlay()
+event PostBeginPlay()
 {
 	local MeshAnimation MeshAnim;
 	
