@@ -15,8 +15,7 @@ struct ChangeRunSpeedStruct
 	var() class<KWPawn> PawnClass;
 	var() name PawnTag;
 	var() float fNewRunSpeed;
-	var() bool bAddRunSpeedInstead;
-	var() bool bDefaultRunSpeedInstead;
+	var() bool bAddRunSpeedInstead, bDefaultRunSpeedInstead;
 };
 
 var(Action) array<ChangeRunSpeedStruct> ChangeRunSpeedActions;

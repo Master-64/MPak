@@ -3356,20 +3356,47 @@ static function bool IsActorBehindActor(Actor A1, Actor A2, optional float fAtta
 	return cosYaw < cosAngle;
 }
 
-static function int Fact(int iValue)
+static function float Fact(int iValue)
 {
-	local int i, iReturn;
+	local float Fact[35];
 	
-	// 13! is above the 32-bit integer limit so we'll clamp it below that
-	iValue = Clamp(iValue, 1, 12);
-	iReturn = 1;
+	Fact[0] = 1.0;
+	Fact[1] = 1.0;
+	Fact[2] = 2.0;
+	Fact[3] = 6.0;
+	Fact[4] = 24.0;
+	Fact[5] = 120.0;
+	Fact[6] = 720.0;
+	Fact[7] = 5040.0;
+	Fact[8] = 40320.0;
+	Fact[9] = 362880.0;
+	Fact[10] = 3628800.0;
+	Fact[11] = 39916800.0;
+	Fact[12] = 479001600.0;
+	Fact[13] = 6227020800.0;
+	Fact[14] = 87178291200.0;
+	Fact[15] = 1307674368000.0;
+	Fact[16] = 20922789888000.0;
+	Fact[17] = 355687428096000.0;
+	Fact[18] = 6402373705728000.0;
+	Fact[19] = 121645100408832000.0;
+	Fact[20] = 2432902008176640000.0;
+	Fact[21] = 51090942171709440000.0;
+	Fact[22] = 1124000727777607680000.0;
+	Fact[23] = 25852016738884976640000.0;
+	Fact[24] = 620448401733239439360000.0;
+	Fact[25] = 15511210043330985984000000.0;
+	Fact[26] = 403291461126605635584000000.0;
+	Fact[27] = 10888869450418352160768000000.0;
+	Fact[28] = 304888344611713860501504000000.0;
+	Fact[29] = 8841761993739701954543616000000.0;
+	Fact[30] = 265252859812191058636308480000000.0;
+	Fact[31] = 8222838654177922817725562880000000.0;
+	Fact[32] = 263130836933693530167218012160000000.0;
+	Fact[33] = 8683317618811886495518194401280000000.0;
+	Fact[34] = 295232799039604140847618609643520000000.0;
 	
-	for(i = iValue; i > 0; i--)
-	{
-		iReturn *= i;
-	}
-	
-	return iReturn;
+	return Fact[Clamp(iValue, 0, 34)];
 }
 
 static function Color RandColor(byte Min, byte Max, optional byte Alpha, optional bool bRandomAlpha)

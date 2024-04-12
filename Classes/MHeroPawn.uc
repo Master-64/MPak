@@ -4594,6 +4594,8 @@ function KillAllEnemiesAround(float killradius)
 
 function UpdateShrekHealth();
 
+// Miscellaneous function overrides start here until states
+
 function float DeliverLocalizedDialog(string DlgID, bool bPlaySound, optional float fDisplayDuration, optional string IntFileName, optional string ExplicitString, optional bool No3D, optional float fVolume, optional bool bNoSubtitle, optional bool bUseSlotIn, optional Actor.ESoundSlot SlotIn)
 {
 	local float fReturn;
@@ -6017,8 +6019,6 @@ state stateHeroDying
 
 defaultproperties
 {
-	LODBias=10.0
-	LODBiasSW=10.0
 	bCanMount=true
 	bLandSlowdown=true
 	iAirJumpCount=1
@@ -6046,6 +6046,8 @@ defaultproperties
 	bCanSpeedCharge=true
 	fSpeedChargeMultiplier=1.25
 	fWeaponDamageScale=2.0
+	LODBias=10.0
+	LODBiasSW=10.0
 	FootPrintDecal=class'SHGame.FootPrintProjector'
 	maxTimePoisoned=5.0
 	poisonDamageAmount=1.0
