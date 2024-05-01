@@ -13,7 +13,7 @@ class MController extends ShrekController
 var float fAnnTime, fTimeAfterLoading, fPlayASoundVolume, fTeleportDist;
 var byte AnnColorR, AnnColorG, AnnColorB;
 var name NewState;
-var bool bCanTPBack, bModifyHealthSFX, bModifyHealthKnockback, bTPBackOncePerTP, bAlwaysGlitchedTripleJump;
+var bool bCanTPBack, bModifyHealthSFX, bModifyHealthKnockback, bTPBackOncePerTP, bAlwaysGlitchedTripleJump, bShowCrosshair, bOldbShowCrosshair;
 var vector OldTPLoc;
 var int iTPRetryAttempts, iSummonRetryAttempts;
 var KWHeroController PC;
@@ -135,6 +135,20 @@ event PlayerTick(float DeltaTime)
 	bLastPressedFire = bFire != 0;
 	bLastPressedAltFire = bAltFire != 0;
 	
+	if(bShowCrosshair != bOldbShowCrosshair)
+	{
+		if(bShowCrosshair && Cursor == none)
+		{
+			makeCursor();
+		}
+		else if(!bShowCrosshair && Cursor != none)
+		{
+			U.FancyDestroy(Cursor);
+		}
+	}
+	
+	bOldbShowCrosshair = bShowCrosshair;
+	
 	super.PlayerTick(DeltaTime);
 }
 
@@ -151,6 +165,14 @@ event PostLoadGame(bool bLoadFromSaveGame)
 	if(bLoadFromSaveGame)
 	{
 		AddCheats();
+	}
+}
+
+function makeCursor()
+{
+	if(bShowCrosshair && Cursor == none)
+	{
+		Cursor = Spawn(DefaultSelectCursorType, self);
 	}
 }
 

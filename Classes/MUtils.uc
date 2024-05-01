@@ -71,7 +71,7 @@ enum EFont
 	F_TinyArielFont
 };
 
-const MaxFloat = 340282346638528860000000000000000000000.0;
+const MaxFloat = 340282346638528860000000000000000000000.0f;
 const sLoremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
 var KWHeroController PC;
@@ -851,7 +851,16 @@ function KillPawn(Pawn P, optional bool bPlayBumpline)
 
 static function float GetHealth(Pawn P)
 {
-	return float(P.GetPropertyText("Health"));
+	if(P.IsA('KWPawn'))
+	{
+		// This could technically result in inaccuracies but this shouldn't normally matter
+		// This method saves a lot of performance over a GetProp so it's worth it to do so
+		return KWPawn(P).GetHealth() * 100.0;
+	}
+	else
+	{
+		return float(P.GetPropertyText("Health"));
+	}
 }
 
 function float GetMaxHealth(Pawn P)
@@ -1669,7 +1678,7 @@ static function bool IsNumeric(string S)
 			
             bDecimalPointFound = true;
         }
-        else if(iChar == Clamp(iChar, 48, 57)) // 0-9
+        else if(iChar < 48 || iChar > 57) // 0-9
         {
             return false;
         }

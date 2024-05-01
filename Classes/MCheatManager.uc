@@ -1447,6 +1447,19 @@ exec function PlayAMovie(string S)
 	}
 }
 
+exec function SetCrosshairVisibility(bool B)
+{
+	Outer.bShowCrosshair = B;
+}
+
+exec function SetCrosshairDistance(float F)
+{
+	if(Outer.Cursor != none)
+	{
+		Outer.Cursor.SetLOSDistance(F);
+	}
+}
+
 
 // Command Aliases
 
@@ -1525,4 +1538,14 @@ exec function FD(bool B)
 exec function AAC()
 {
 	AntiAntiCheat();
+}
+
+exec function SCV(bool B)
+{
+	SetCrosshairVisibility(B);
+}
+
+exec function SCD(float F)
+{
+	SetCrosshairDistance(F);
 }
