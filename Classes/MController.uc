@@ -245,7 +245,7 @@ defaultproperties
 	Save3Image="storybookanimTX.box_button"
 	Save4Image="storybookanimTX.box_button"
 	Save5Image="storybookanimTX.box_button"
-	DefaultSelectCursorType=none
+	DefaultSelectCursorType=class'MSelectCursor'
 	CameraClass=class'ShCam'
 	rSnapRotation=(Pitch=-1,Yaw=0,Roll=0)
 	rSnapRotationSpeed=(Pitch=7,Yaw=0,Roll=0)
