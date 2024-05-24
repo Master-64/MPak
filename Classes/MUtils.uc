@@ -1638,7 +1638,7 @@ static function string AlphaNumeric(string S)
 	local string Result;
 	local int i, iChar;
 	
-	for (i = 0; i < Len(S); i++)
+	for(i = 0; i < Len(S); i++)
 	{
 		iChar = Asc(Right(S, Len(S) - i));
 		
@@ -1663,6 +1663,11 @@ static function bool IsNumeric(string S)
 {
     local int i, iChar;
     local bool bDecimalPointFound;
+	
+	if(S == "")
+	{
+		return false;
+	}
     
     for(i = 0; i < Len(S); i++)
     {
@@ -3061,6 +3066,13 @@ function int GetInventoryCount(class<KWInventoryCollection> CollectionClass)
 
 function ChangeLevel(string sLevelName, optional bool bKeepInventory)
 {
+	if(PC == none)
+	{
+		GetPC();
+	}
+	
+	PC.ClientCloseMenu(true);
+	
 	Level.Game.ProcessServerTravel(sLevelName, bKeepInventory);
 }
 
@@ -3428,6 +3440,19 @@ static function Color RandColor(byte Min, byte Max, optional byte Alpha, optiona
 	}
 	
 	return MakeColor(Bs[0], Bs[1], Bs[2], Bs[3]);
+}
+
+function Mutator GetMutator(class<Mutator> MutatorClass)
+{
+	local Mutator M;
+	
+	foreach AllActors(class'Mutator', M)
+	{
+		if(M.Class == MutatorClass)
+		{
+			return M;
+		}
+	}
 }
 
 

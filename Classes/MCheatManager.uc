@@ -263,6 +263,13 @@ exec function MWalk()
 	Outer.Pawn.bCollideWorld = true;
 	Outer.Pawn.bCanDoubleJump = Outer.Pawn.default.bCanDoubleJump;
 	Outer.ClientReStart();
+	Outer.Pawn.bPhysicsAnimUpdate = Outer.Pawn.default.bPhysicsAnimUpdate;
+	
+	if(Outer.Pawn.IsA('SHHeroPawn'))
+	{
+		SHHeroPawn(Outer.Pawn).FallOrginLocation = Outer.Pawn.Location;
+	}
+	
 	Outer.Pawn.Landed(Outer.Pawn.Location);
 }
 
