@@ -23,7 +23,7 @@ var bool L, R, bOldbShowShrek;
 
 function AttachGenericColObjs()
 {
-	if(!bIsMainPlayer)
+	if(!bool(GetPropertyText("bIsMainPlayer")))
 	{
 		return;
 	}
@@ -76,11 +76,11 @@ event PostBeginPlay()
 	
 	if(bShowShrek)
 	{
-		Skins[1] = ShrekSkin;
+		Skins[1] = none;
 	}
 	else
 	{
-		Skins[1] = none;
+		Skins[1] = ShrekSkin;
 	}
 }
 
@@ -114,11 +114,11 @@ event Tick(float DeltaTime)
 	{
 		if(bShowShrek)
 		{
-			Skins[1] = ShrekSkin;
+			Skins[1] = none;
 		}
 		else
 		{
-			Skins[1] = none;
+			Skins[1] = ShrekSkin;
 		}
 	}
 	
@@ -182,7 +182,7 @@ function ShakeTheGround()
 
 function SayHitKarmaBumpLine()
 {
-	if(bIsMainPlayer)
+	if(bool(GetPropertyText("bIsMainPlayer")))
 	{
 		InterestMgr.CommentMgr.SayComment('GBM_MongoCheer', Tag,, true,,, self, "BumpDialog");
 	}
@@ -204,7 +204,7 @@ function TakeDamage(int Damage, Pawn instigatedBy, vector HitLocation, vector Mo
 	
 	super.TakeDamage(Damage, instigatedBy, HitLocation, Momentum, DamageType);
 	
-	if(bIsMainPlayer && U.GetHealth(self) > 0.0 && Damage > 0)
+	if(bool(GetPropertyText("bIsMainPlayer")) && U.GetHealth(self) > 0.0 && Damage > 0)
 	{
 		InterestMgr.CommentMgr.SayComment('GGM_MongoHurt', Tag,, true,,, self, "BumpDialog");
 	}
@@ -303,7 +303,7 @@ function DropACrump()
 
 function ColObjTouch(Actor Other, GenericColObj ColObj)
 {
-	Other.TakeDamage(1, self, ColObj.Location, U.Vec(0.0, 0.0, 0.0), none);
+	Other.TakeDamage(iFirstAttackDamage, self, ColObj.Location, U.Vec(0.0, 0.0, 0.0), none);
 }
 
 function bool DoJump(bool bUpdating)
@@ -318,11 +318,6 @@ function bool DoJump(bool bUpdating)
 	return false;
 }
 
-function bool MovingForward()
-{
-	return false;
-}
-
 event Bump(Actor Other)
 {
 	super.Bump(Other);
@@ -332,7 +327,7 @@ event Bump(Actor Other)
 		return;
 	}
 	
-	Pawn(Other).TakeDamage(1, self, U.Vec(0.0, 0.0, 0.0), U.Vec(0.0, 0.0, 0.0), class'WalkingKickDamage');
+	Pawn(Other).TakeDamage(iFirstAttackDamage, self, U.Vec(0.0, 0.0, 0.0), U.Vec(0.0, 0.0, 0.0), class'WalkingKickDamage');
 }
 
 state stateKickAttack
@@ -543,10 +538,14 @@ defaultproperties
 	IdleAnims(7)=Idle
 	bIsMainPlayer=true
 	ControllerClass=class'SHCompanionController'
-	MovementAnims[0]=Walk
-	MovementAnims[1]=walkbackwards
-	MovementAnims[2]=walkleft
-	MovementAnims[3]=walkright
+	MovementAnims(0)=Walk
+	MovementAnims(1)=walkbackwards
+	MovementAnims(2)=walkleft
+	MovementAnims(3)=walkright
+	_MovementAnims(0]=Walk
+	_MovementAnims(1]=walkbackwards
+	_MovementAnims(2]=walkleft
+	_MovementAnims(3]=walkright
 	TurnLeftAnim=TurnLeft
 	TurnRightAnim=TurnRight
 	Mesh=SkeletalMesh'ShrekCharacters.Mongo'
