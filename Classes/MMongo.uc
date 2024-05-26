@@ -16,7 +16,7 @@ var() array<Material> SkinsArray;
 var() Material ShrekSkinInv, ShrekSkin;
 var() array<Sound> Throw2Sounds, KickSounds, FakeKickSounds;
 var GenericColObj LeftFistColObj, RightFistColObj;
-var name LeftFistBone, RightFistBone, KickAnimName;
+var() name LeftFistBone, RightFistBone, KickAnimName;
 var() bool bShowShrek;
 var() int iKickAttackDamage;
 var bool L, R, bOldbShowShrek;

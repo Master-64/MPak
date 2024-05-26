@@ -849,13 +849,21 @@ function KillPawn(Pawn P, optional bool bPlayBumpline)
 	ModifyHealth(P, 0.0, true,, bPlayBumpline);
 }
 
-static function float GetHealth(Pawn P)
+function float GetHealth(Pawn P)
 {
 	if(P.IsA('KWPawn'))
 	{
 		// This could technically result in inaccuracies but this shouldn't normally matter
 		// This method saves a lot of performance over a GetProp so it's worth it to do so
-		return KWPawn(P).GetHealth() * 100.0;
+		// However, this method can't return health values above 100, so run a GetProp if we have to
+		if(GetMaxHealth(P) <= 100.0)
+		{
+			return KWPawn(P).GetHealth() * 100.0;
+		}
+		else
+		{
+			return float(P.GetPropertyText("Health"));
+		}
 	}
 	else
 	{
@@ -867,7 +875,14 @@ function float GetMaxHealth(Pawn P)
 {
 	if(P.IsA('SHHeroPawn'))
 	{
-		return float(KWPawn(ICP).GetInventoryCount('Shamrock') + 1) * KWPawn(P).MaxHealth;
+		if(!IsShrek22())
+		{
+			return float(KWPawn(ICP).GetInventoryCount('Shamrock') + 1) * KWPawn(P).MaxHealth;
+		}
+		else
+		{
+			return KWPawn(P).MaxHealth + (20.0 * float(KWPawn(ICP).GetInventoryCount('Shamrock')));
+		}
 	}
 	else if(P.IsA('KWPawn'))
 	{
@@ -1265,7 +1280,14 @@ private function ModifyShamrocks(int iShamrockCount, optional bool bBypassHealth
 	
 	if(!bBypassHealthCap)
 	{
-		iShamrockCount = Clamp(iShamrockCount, -1, 5);
+		if(!IsShrek22())
+		{
+			iShamrockCount = Clamp(iShamrockCount, -1, 5);
+		}
+		else
+		{
+			iShamrockCount = Clamp(iShamrockCount, -1, 8);
+		}
 	}
 	
 	iOldShamrockCount = KWPawn(ICP).GetInventoryCount('Shamrock');
