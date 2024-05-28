@@ -71,7 +71,7 @@ event PreBeginPlay()
 	
 	_BaseMovementRate = default.GroundRunSpeed * (450.0 / 550.0);
 	SetPropertyText("BaseMovementRate", string(_BaseMovementRate));
-	default.GroundSpeed = GroundRunSpeed;
+	default.GroundSpeed = default.GroundRunSpeed;
 }
 
 event PostBeginPlay()
@@ -234,7 +234,7 @@ event ChangeAnimation()
 		return;
 	}
 	
-	GroundSpeed = GroundRunSpeed;
+	GroundSpeed = default.GroundRunSpeed;
 	WalkingPct = GroundWalkSpeed / GroundSpeed;
 	
 	if(bInWater || bInQuicksand)
@@ -2272,6 +2272,24 @@ function GoToStateKnock(bool forward)
 	else
 	{
 		GotoState('stateKnockBack');
+	}
+	
+	if(bCanSpeedCharge)
+	{
+		if(bInWater || bInQuicksand)
+		{
+			GroundSpeed = default.WaterGroundSpeed;
+			GroundRunSpeed = default.GroundRunSpeed;
+			SetPropertyText("BaseMovementRate", string(default.WaterGroundSpeed));
+		}
+		else
+		{
+			GroundSpeed = default.GroundRunSpeed;
+			GroundRunSpeed = default.GroundRunSpeed;
+			SetPropertyText("BaseMovementRate", string(_BaseMovementRate));
+		}
+		
+		SetPropertyText("AccelRate", string(_AccelRate));
 	}
 }
 
@@ -5029,7 +5047,7 @@ state stateRunAttack
 		if(bCanSpeedCharge)
 		{
 			SetPropertyText("AccelRate", string(_AccelRate / 2.0));
-			GroundSpeed = GroundSpeed * fSpeedChargeMultiplier;
+			GroundSpeed = default.GroundSpeed * fSpeedChargeMultiplier;
 			GroundRunSpeed = GroundSpeed;
 			SetPropertyText("BaseMovementRate", string(GroundSpeed / fSpeedChargeMultiplier));
 		}
