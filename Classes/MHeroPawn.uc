@@ -5146,19 +5146,6 @@ state stateRunAttack
 			RunAttackEmitter.SetLocation(GetRunAttackEmitterLocation());
 		}
 	}
-	
-	event Landed(vector N)
-	{
-		super.Landed(N);
-		
-		if(bCanSpeedCharge && !(bInWater || bInQuicksand))
-		{
-			GroundSpeed = default.GroundSpeed * fSpeedChargeMultiplier;
-			GroundRunSpeed = GroundSpeed;
-			SetPropertyText("BaseMovementRate", string(GroundSpeed / fSpeedChargeMultiplier));
-			SetPropertyText("AccelRate", string(_AccelRate));
-		}
-	}
 
 	function AnimEnd(int Channel)
 	{
