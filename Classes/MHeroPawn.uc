@@ -11,7 +11,7 @@ class MHeroPawn extends SHHeroPawn
 	Config(MPak);
 
 
-var() bool bCanMount, bCanWaterJump, bCanAirJump, bCannotJump, bCannotPunch, bCanJumpAttackWhileFalling, bLandSlowdown, bUseNewFallDamageSystem, bDisableLandBobbing, bDisableFallDamage, bUseBoneForHit, bAllowJumpAttackPrebuffering, bCanJumpDuringShrink, bLandingCancelsAttack, bModifiedBumplines, bCanSpeedCharge;
+var() bool bCanMount, bCanWaterJump, bCanAirJump, bCannotJump, bCannotPunch, bCanJumpAttackWhileFalling, bLandSlowdown, bUseNewFallDamageSystem, bDisableLandBobbing, bDisableFallDamage, bUseBoneForHit, bAllowJumpAttackPrebuffering, bCanJumpDuringShrink, bLandingCancelsAttack, bModifiedBumplines, bCanSpeedCharge, bCanJumpWhileSliding, bAttackOnCancelChargeAttack;
 var() int iDoubleJumpCount, iAirJumpCount, iFirstAttackDamage, iSecondAttackDamage, iThirdAttackDamage, iThirdAttackSplashDamage, iRunAttackDamage, iSpecialAttackDamage;
 var() float fFatalFallDamageMultiplier, fLandingBobMultiplier, fDamageMultiplier, fTiredHealth, fTiredHealthPercent, fMinTiredDialogTime, fTiredDialogChance, fBlinkChance, fDelayAfterDeathBeforeReload, fFightingIdleRangeMultiplier, fHitBumplineChance, fSpeedChargeMultiplier, fWeaponDamageScale;
 var int iDoubleJumpCounter, iAirJumpCounter;
@@ -1792,7 +1792,7 @@ protected function bool KWPawn_DoJump(bool bUpdating)
 {
 	local bool bReturn;
 	
-	if(bIsSliding || aHolding != none || bDoingDoubleJump)
+	if((bIsSliding && !bCanJumpWhileSliding) || aHolding != none || bDoingDoubleJump)
 	{
 		return false;
 	}
@@ -5138,7 +5138,14 @@ state stateRunAttack
 		{
 			bPressDuringRunAttack = false;
 			
-			GotoState('stateStartAttack');
+			if(bAttackOnCancelChargeAttack)
+			{
+				GotoState('stateStartAttack');
+			}
+			else
+			{
+				GotoState('StateIdle');
+			}
 		}
 		
 		if(RunAttackEmitter != none)
@@ -6024,6 +6031,8 @@ state stateHeroDying
 
 defaultproperties
 {
+	bCanJumpWhileSliding=true
+	bAttackOnCancelChargeAttack=true
 	bCanMount=true
 	bLandSlowdown=true
 	iAirJumpCount=1
