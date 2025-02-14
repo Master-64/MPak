@@ -3513,6 +3513,24 @@ static function bool Contains(string sKey, string sValue, optional bool bCaseSen
 	}
 }
 
+function array<Mutator> GetActiveMutators()
+{
+	local array<Mutator> MutatorList;
+	local Mutator CurrentMutator;
+
+	CurrentMutator = Level.Game.BaseMutator;
+
+	while(CurrentMutator != none)
+	{
+		MutatorList.Insert(MutatorList.Length, 1);
+		MutatorList[MutatorList.Length - 1] = CurrentMutator;
+
+		CurrentMutator = CurrentMutator.NextMutator;
+	}
+
+	return MutatorList;
+}
+
 
 // KnowWonder Functions
 
