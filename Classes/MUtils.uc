@@ -3531,6 +3531,11 @@ function array<Mutator> GetActiveMutators()
 	return MutatorList;
 }
 
+function bool PlayerIsAttacking(SHHeroPawn P)
+{
+	return P.IsAttacking() || P.GetStateName() == 'stateRunAttack';
+}
+
 
 // KnowWonder Functions
 
